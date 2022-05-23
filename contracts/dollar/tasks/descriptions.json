@@ -1,0 +1,7 @@
+[
+  {
+    "name": "investor-emissions",
+    "description": "Get info about manager contract's address",
+    "parameters": []
+  }
+]
