@@ -14,6 +14,7 @@ import "./metapool";
 import "./price";
 import "./token";
 import "./manager";
+import "./investor-emissions";
 import "./adminRemoveLiquidity";
 import "./excessDollarDistribution";
 import "./revoke";

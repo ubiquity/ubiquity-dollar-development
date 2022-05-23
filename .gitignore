@@ -45,3 +45,6 @@ typings
 /abi/types/*
 /fixtures/contracts-addresses/*
 !/fixtures/contracts-addresses/.keep
+
+# not sure what this is
+contract.evm
