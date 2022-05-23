@@ -17,48 +17,29 @@ task("manager", "Get info about manager contract's address").setAction(
       "UbiquityAlgorithmicDollarManager",
       managerAdr
     )) as UbiquityAlgorithmicDollarManager;
-    const mgrtwapOracleAddress = await manager.twapOracleAddress();
-    const mgrdebtCouponAddress = await manager.debtCouponAddress();
-    const mgrDollarTokenAddress = await manager.dollarTokenAddress();
-    const mgrcouponCalculatorAddress = await manager.couponCalculatorAddress();
-    const mgrdollarMintingCalculatorAddress =
-      await manager.dollarMintingCalculatorAddress();
-    const mgrbondingShareAddress = await manager.bondingShareAddress();
-    const mgrbondingContractAddress = await manager.bondingContractAddress();
-    const mgrstableSwapMetaPoolAddress =
-      await manager.stableSwapMetaPoolAddress();
-    const mgrcurve3PoolTokenAddress = await manager.curve3PoolTokenAddress(); // 3CRV
-    const mgrtreasuryAddress = await manager.treasuryAddress();
-    const mgruGOVTokenAddress = await manager.governanceTokenAddress();
-    const mgrsushiSwapPoolAddress = await manager.sushiSwapPoolAddress(); // sushi pool uAD-uGOV
-    const mgrmasterChefAddress = await manager.masterChefAddress();
-    const mgrformulasAddress = await manager.formulasAddress();
-    const mgrautoRedeemTokenAddress = await manager.autoRedeemTokenAddress(); // uAR
-    const mgruarCalculatorAddress = await manager.uarCalculatorAddress(); // uAR calculator
 
-    const mgrExcessDollarsDistributor =
-      await manager.getExcessDollarsDistributor(debtCouponMgrAdr);
-    console.log(`
-      ****
-      debtCouponMgr:${debtCouponMgrAdr}
-      manager ALL VARS:
-      mgrtwapOracleAddress:${mgrtwapOracleAddress}
-      debtCouponAddress:${mgrdebtCouponAddress}
-      uADTokenAddress:${mgrDollarTokenAddress}
-      couponCalculatorAddress:${mgrcouponCalculatorAddress}
-      dollarMintingCalculatorAddress:${mgrdollarMintingCalculatorAddress}
-      bondingShareAddress:${mgrbondingShareAddress}
-      bondingContractAddress:${mgrbondingContractAddress}
-      stableSwapMetaPoolAddress:${mgrstableSwapMetaPoolAddress}
-      curve3PoolTokenAddress:${mgrcurve3PoolTokenAddress}
-      treasuryAddress:${mgrtreasuryAddress}
-      uGOVTokenAddress:${mgruGOVTokenAddress}
-      sushiSwapPoolAddress:${mgrsushiSwapPoolAddress}
-      masterChefAddress:${mgrmasterChefAddress}
-      formulasAddress:${mgrformulasAddress}
-      autoRedeemTokenAddress:${mgrautoRedeemTokenAddress}
-      uarCalculatorAddress:${mgruarCalculatorAddress}
-      ExcessDollarsDistributor:${mgrExcessDollarsDistributor}
-      `);
+
+    const spreadsheet = {
+      "mgrtwapOracleAddress": await manager.twapOracleAddress(),
+      "mgrdebtCouponAddress": await manager.debtCouponAddress(),
+      "mgrDollarTokenAddress": await manager.dollarTokenAddress(),
+      "mgrcouponCalculatorAddress": await manager.couponCalculatorAddress(),
+      "mgrdollarMintingCalculatorAddress": await manager.dollarMintingCalculatorAddress(),
+      "mgrbondingShareAddress": await manager.bondingShareAddress(),
+      "mgrbondingContractAddress": await manager.bondingContractAddress(),
+      "mgrstableSwapMetaPoolAddress": await manager.stableSwapMetaPoolAddress(),
+      "mgrcurve3PoolTokenAddress": await manager.curve3PoolTokenAddress() /* 3CRV */,
+      "mgrtreasuryAddress": await manager.treasuryAddress(),
+      "mgruGOVTokenAddress": await manager.governanceTokenAddress(),
+      "mgrsushiSwapPoolAddress": await manager.sushiSwapPoolAddress() /* sushi pool uAD-uGOV */,
+      "mgrmasterChefAddress": await manager.masterChefAddress(),
+      "mgrformulasAddress": await manager.formulasAddress(),
+      "mgrautoRedeemTokenAddress": await manager.autoRedeemTokenAddress() /* uAR */,
+      "mgruarCalculatorAddress": await manager.uarCalculatorAddress() /* uAR calculator */,
+      "mgrExcessDollarsDistributor": await manager.getExcessDollarsDistributor(debtCouponMgrAdr)
+    };
+
+    console.table(spreadsheet);
+
   }
 );
