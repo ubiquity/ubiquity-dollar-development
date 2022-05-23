@@ -1,16 +1,14 @@
+import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
-import "@nomiclabs/hardhat-ethers";
 import "@typechain/hardhat";
 import * as dotenv from "dotenv";
+import fs from "fs";
 import "hardhat-deploy";
 import "hardhat-gas-reporter";
-import "solidity-coverage";
 import { HardhatUserConfig } from "hardhat/types";
-
-import fs from "fs";
 import path from "path";
-
+import "solidity-coverage";
 
 if (fs.existsSync(path.join(__dirname, "artifacts/types"))) {
   import("./tasks/index");
@@ -30,12 +28,8 @@ const {
   API_KEY_COINMARKETCAP,
 } = process.env;
 
-const mnemonic = `${MNEMONIC || "test test test test test test test test test test test junk"
-  }`;
-
 const accounts = {
-  // use default accounts
-  mnemonic,
+  mnemonic: `${MNEMONIC || "test test test test test test test test test test test junk"}`, // use default accounts
 };
 
 const config: HardhatUserConfig = {
@@ -105,8 +99,7 @@ const config: HardhatUserConfig = {
     localhost: {
       url: `http://127.0.0.1:8545`,
       forking: {
-        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.API_KEY_ALCHEMY || ""
-          }`,
+        url: getAlchemyRpc("mainnet"),
         blockNumber: 13252206,
       },
       accounts,
@@ -115,8 +108,7 @@ const config: HardhatUserConfig = {
     },
     hardhat: {
       forking: {
-        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.API_KEY_ALCHEMY || ""
-          }`,
+        url: getAlchemyRpc("mainnet"),
         blockNumber: 13252206,
       },
       accounts,
@@ -124,20 +116,18 @@ const config: HardhatUserConfig = {
       initialBaseFeePerGas: 0,
     },
     mainnet: {
-      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.API_KEY_ALCHEMY || ""
-        }`,
+      url: getAlchemyRpc("mainnet"),
       accounts: UBQ ? [UBQ] : accounts,
       gasPrice: 60000000000,
     },
     ropsten: {
       gasPrice: 60000000000,
-      url: `https://eth-ropsten.alchemyapi.io/v2/${process.env.API_KEY_ALCHEMY || ""
-        }`,
+      url: getAlchemyRpc("ropsten"),
       accounts,
     },
     rinkeby: {
       gasPrice: 60000000000,
-      url: `https://eth-rinkeby.alchemyapi.io/v2/${API_KEY_ALCHEMY || ""}`,
+      url: getAlchemyRpc("rinkeby"),
       accounts,
     },
   },
@@ -159,3 +149,21 @@ const config: HardhatUserConfig = {
 };
 
 export default config;
+
+
+function getAlchemyRpc(network: string, lastChance?: boolean): string {
+  // This will try and resolve alchemy key related issues
+  // first it will read the key value
+  // if no value found, then it will attempt to symlink the .env from above to the .env in the current folder
+  // if that fails, then it will throw an error and allow the developer to rectify the issue
+  if (API_KEY_ALCHEMY?.length) {
+    return `https://eth-${network}.alchemyapi.io/v2/${process.env.API_KEY_ALCHEMY}`;
+  }
+  if (lastChance) {
+    throw new Error("Please set the API_KEY_ALCHEMY environment variable to your Alchemy API key")
+  } else {
+    // didn't find API_KEY_ALCHEMY, try symlinking from .env above
+    fs.symlinkSync("../../.env", "./");
+    return getAlchemyRpc(network, true);
+  }
+}
