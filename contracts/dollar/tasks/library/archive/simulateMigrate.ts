@@ -78,12 +78,9 @@ task("simulateMigrate", "simulate migration of one address")
   .setAction(async (taskArgs: { address: string }, { ethers, network }) => {
     const { address: paramAddress } = taskArgs;
 
-    const UBQ_MINTER_ROLE = ethers.utils.keccak256(
-      ethers.utils.toUtf8Bytes("UBQ_MINTER_ROLE")
-    );
+    const UBQ_MINTER_ROLE = ethers.utils.keccak256(ethers.utils.toUtf8Bytes("UBQ_MINTER_ROLE"));
 
-    const UbiquityAlgorithmicDollarManagerAddress =
-      "0x4DA97a8b831C345dBe6d16FF7432DF2b7b776d98";
+    const UbiquityAlgorithmicDollarManagerAddress = "0x4DA97a8b831C345dBe6d16FF7432DF2b7b776d98";
     let manager: UbiquityAlgorithmicDollarManager;
 
     const adminAddress = "0xefC0e701A824943b469a694aC564Aa1efF7Ab7dd";
@@ -106,30 +103,21 @@ task("simulateMigrate", "simulate migration of one address")
       });
     };
 
-    const mineNBlock = async (
-      blockCount: number,
-      secondsBetweenBlock?: number
-    ): Promise<void> => {
+    const mineNBlock = async (blockCount: number, secondsBetweenBlock?: number): Promise<void> => {
       const blockBefore = await ethers.provider.getBlock("latest");
       const maxMinedBlockPerBatch = 5000;
       let blockToMine = blockCount;
       let blockTime = blockBefore.timestamp;
       while (blockToMine > maxMinedBlockPerBatch) {
         // eslint-disable-next-line @typescript-eslint/no-loop-func
-        const minings = [...Array(maxMinedBlockPerBatch).keys()].map(
-          (_v, i) => {
-            const newTs = blockTime + i + (secondsBetweenBlock || 1);
-            return mineBlock(newTs);
-          }
-        );
+        const minings = [...Array(maxMinedBlockPerBatch).keys()].map((_v, i) => {
+          const newTs = blockTime + i + (secondsBetweenBlock || 1);
+          return mineBlock(newTs);
+        });
         // eslint-disable-next-line no-await-in-loop
         await Promise.all(minings);
         blockToMine -= maxMinedBlockPerBatch;
-        blockTime =
-          blockTime +
-          maxMinedBlockPerBatch -
-          1 +
-          maxMinedBlockPerBatch * (secondsBetweenBlock || 1);
+        blockTime = blockTime + maxMinedBlockPerBatch - 1 + maxMinedBlockPerBatch * (secondsBetweenBlock || 1);
       }
       const minings = [...Array(blockToMine).keys()].map((_v, i) => {
         const newTs = blockTime + i + (secondsBetweenBlock || 1);
@@ -145,8 +133,7 @@ task("simulateMigrate", "simulate migration of one address")
         params: [
           {
             forking: {
-              jsonRpcUrl: `https://eth-mainnet.alchemyapi.io/v2/${process.env.API_KEY_ALCHEMY || ""
-                }`,
+              jsonRpcUrl: `https://eth-mainnet.alchemyapi.io/v2/${process.env.API_KEY_ALCHEMY || ""}`,
               blockNumber,
             },
           },
@@ -164,15 +151,10 @@ task("simulateMigrate", "simulate migration of one address")
       //   amounts,
       //   ids
       // )) as MasterChefV2;
-      const newChefV2: MasterChefV2 = (await ethers.getContractAt(
-        "MasterChefV2",
-        "0xdae807071b5AC7B6a2a343beaD19929426dBC998"
-      )) as MasterChefV2;
+      const newChefV2: MasterChefV2 = (await ethers.getContractAt("MasterChefV2", "0xdae807071b5AC7B6a2a343beaD19929426dBC998")) as MasterChefV2;
 
       await manager.connect(admin).setMasterChefAddress(newChefV2.address);
-      await manager
-        .connect(admin)
-        .grantRole(UBQ_MINTER_ROLE, newChefV2.address);
+      await manager.connect(admin).grantRole(UBQ_MINTER_ROLE, newChefV2.address);
 
       return newChefV2;
     };
@@ -186,41 +168,19 @@ task("simulateMigrate", "simulate migration of one address")
 
       admin = ethers.provider.getSigner(adminAddress);
 
-      manager = (await ethers.getContractAt(
-        "UbiquityAlgorithmicDollarManager",
-        UbiquityAlgorithmicDollarManagerAddress
-      )) as UbiquityAlgorithmicDollarManager;
+      manager = (await ethers.getContractAt("UbiquityAlgorithmicDollarManager", UbiquityAlgorithmicDollarManagerAddress)) as UbiquityAlgorithmicDollarManager;
 
-      bondingShareV2 = (await ethers.getContractAt(
-        "BondingShareV2",
-        BondingShareV2Address
-      )) as BondingShareV2;
+      bondingShareV2 = (await ethers.getContractAt("BondingShareV2", BondingShareV2Address)) as BondingShareV2;
 
       masterChefV2 = await newMasterChefV2();
 
-      bondingV2 = (await ethers.getContractAt(
-        "BondingV2",
-        BondingV2Address
-      )) as BondingV2;
+      bondingV2 = (await ethers.getContractAt("BondingV2", BondingV2Address)) as BondingV2;
     };
 
     const query = async (
       bondId: number,
       log = false
-    ): Promise<
-      [
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        number
-      ]
-    > => {
+    ): Promise<[BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, number]> => {
       const block = await ethers.provider.getBlockNumber();
       const uGOVmultiplier = await masterChefV2.uGOVmultiplier();
       const totalShares = await masterChefV2.totalShares();
@@ -229,9 +189,7 @@ task("simulateMigrate", "simulate migration of one address")
       const totalLP = await bondingShareV2.totalLP();
 
       const pendingUGOV = await masterChefV2.pendingUGOV(bondId);
-      const [amount, rewardDebt] = await masterChefV2.getBondingShareInfo(
-        bondId
-      );
+      const [amount, rewardDebt] = await masterChefV2.getBondingShareInfo(bondId);
       const bond = await bondingShareV2.getBond(bondId);
 
       if (log) {
@@ -239,10 +197,7 @@ task("simulateMigrate", "simulate migration of one address")
         console.log("uGOVmultiplier", ethers.utils.formatEther(uGOVmultiplier));
         console.log("totalShares", ethers.utils.formatEther(totalShares));
         console.log("lastRewardBlock", lastRewardBlock.toString());
-        console.log(
-          "accuGOVPerShare",
-          ethers.utils.formatUnits(accuGOVPerShare.toString(), 12)
-        );
+        console.log("accuGOVPerShare", ethers.utils.formatUnits(accuGOVPerShare.toString(), 12));
         console.log("totalSupply", totalSupply.toString());
         console.log("totalLP", totalLP.toString());
 
@@ -254,18 +209,7 @@ task("simulateMigrate", "simulate migration of one address")
           console.log("bond", bond.toString());
         }
       }
-      return [
-        totalShares,
-        accuGOVPerShare,
-        pendingUGOV,
-        amount,
-        rewardDebt,
-        totalSupply,
-        totalLP,
-        uGOVmultiplier,
-        lastRewardBlock,
-        block,
-      ];
+      return [totalShares, accuGOVPerShare, pendingUGOV, amount, rewardDebt, totalSupply, totalLP, uGOVmultiplier, lastRewardBlock, block];
     };
 
     const migrate = async (_address: string) => {
@@ -300,9 +244,7 @@ task("simulateMigrate", "simulate migration of one address")
         const weeks = args && args[4];
 
         expect(user?.toLowerCase()).to.be.equal(_address.toLowerCase());
-        expect(id).to.be.equal(
-          (await bondingShareV2.holderTokens(_address))[0].toString()
-        );
+        expect(id).to.be.equal((await bondingShareV2.holderTokens(_address))[0].toString());
 
         // mine some blocks to get pendingUGOV
         await mineNBlock(100);
@@ -321,16 +263,10 @@ task("simulateMigrate", "simulate migration of one address")
         const lastRewardBlock = res[8].toString();
         const block = res[9];
 
-        console.log(
-          `>> ${lpsAmount} uAD3CRV-f locked ${weeks} weeks Migrated to Bond #${id}`
-        );
+        console.log(`>> ${lpsAmount} uAD3CRV-f locked ${weeks} weeks Migrated to Bond #${id}`);
         console.log(`>> ${amount} UBQ  and ${pendingUGOV} UBQ pending`);
-        console.log(
-          `== Block ${block}  Last Reward Block ${lastRewardBlock}  Total Bond ${totalSupply}  UBQ Rewards per Block ${uGOVmultiplier}`
-        );
-        console.log(
-          `== Total uAD3CRV-f ${totalLP}  Total UBQ ${totalShares}  Total UBQ Accumulated per Share ${accuGOVPerShare}`
-        );
+        console.log(`== Block ${block}  Last Reward Block ${lastRewardBlock}  Total Bond ${totalSupply}  UBQ Rewards per Block ${uGOVmultiplier}`);
+        console.log(`== Total uAD3CRV-f ${totalLP}  Total UBQ ${totalShares}  Total UBQ Accumulated per Share ${accuGOVPerShare}`);
       } catch (e) {
         console.log(`** ERROR ${(e as Error).message}`);
       }

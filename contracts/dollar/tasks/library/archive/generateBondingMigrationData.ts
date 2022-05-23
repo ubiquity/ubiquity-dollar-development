@@ -3,20 +3,11 @@ import path from "path";
 import { task, types } from "hardhat/config";
 import { BigNumber, utils } from "ethers";
 import { Bonding } from "../../artifacts/types/Bonding";
-import {
-  Transaction,
-  TransactionEvent,
-  EtherscanResponse,
-  generateEtherscanQuery,
-  generateEventLogQuery,
-  fetchEtherscanApi,
-} from "../../utils/etherscan";
+import { Transaction, TransactionEvent, EtherscanResponse, generateEtherscanQuery, generateEventLogQuery, fetchEtherscanApi } from "../../utils/etherscan";
 
 const BONDING_CONTRACT_ADDRESS = "0x831e3674Abc73d7A3e9d8a9400AF2301c32cEF0C";
-const BONDING_SHARE_CONTRACT_ADDRESS =
-  "0x0013B6033dd999676Dc547CEeCEA29f781D8Db17";
-const TRANSFER_SINGLE_TOPIC_HASH =
-  "0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62";
+const BONDING_SHARE_CONTRACT_ADDRESS = "0x0013B6033dd999676Dc547CEeCEA29f781D8Db17";
+const TRANSFER_SINGLE_TOPIC_HASH = "0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62";
 
 const CONTRACT_GENESIS_BLOCK = 12595544;
 const DEFAULT_OUTPUT_NAME = "bonding_migration.json";
@@ -36,35 +27,15 @@ type ParsedTransaction = {
   transaction: Transaction;
 };
 
-async function fetchEtherscanBondingContract(): Promise<
-  EtherscanResponse<Transaction>
-> {
-  return fetchEtherscanApi(
-    generateEtherscanQuery(
-      BONDING_CONTRACT_ADDRESS,
-      CONTRACT_GENESIS_BLOCK,
-      "latest"
-    )
-  );
+async function fetchEtherscanBondingContract(): Promise<EtherscanResponse<Transaction>> {
+  return fetchEtherscanApi(generateEtherscanQuery(BONDING_CONTRACT_ADDRESS, CONTRACT_GENESIS_BLOCK, "latest"));
 }
 
-async function fetchTransferSingleEvents(): Promise<
-  EtherscanResponse<TransactionEvent>
-> {
-  return fetchEtherscanApi(
-    generateEventLogQuery(
-      BONDING_SHARE_CONTRACT_ADDRESS,
-      TRANSFER_SINGLE_TOPIC_HASH,
-      CONTRACT_GENESIS_BLOCK,
-      "latest"
-    )
-  );
+async function fetchTransferSingleEvents(): Promise<EtherscanResponse<TransactionEvent>> {
+  return fetchEtherscanApi(generateEventLogQuery(BONDING_SHARE_CONTRACT_ADDRESS, TRANSFER_SINGLE_TOPIC_HASH, CONTRACT_GENESIS_BLOCK, "latest"));
 }
 
-function parseTransactions(
-  bondingContract: Bonding,
-  transactions: Transaction[]
-): ParsedTransaction[] {
+function parseTransactions(bondingContract: Bonding, transactions: Transaction[]): ParsedTransaction[] {
   return transactions.map((t) => {
     const parsedTransaction: ParsedTransaction = {
       hash: t.hash,
@@ -97,20 +68,11 @@ function parseTransactions(
   });
 }
 function calculateTotal(amounts: string[]): string {
-  const lpsAmount = amounts.reduce(
-    (t, d) => t.add(BigNumber.from(d)),
-    BigNumber.from(0)
-  );
+  const lpsAmount = amounts.reduce((t, d) => t.add(BigNumber.from(d)), BigNumber.from(0));
   return utils.formatEther(lpsAmount);
 }
-function writeToDisk(
-  migrations: { [key: string]: MigrationData },
-  directory: string
-) {
-  fs.writeFileSync(
-    directory,
-    JSON.stringify(Object.values(migrations), null, 2)
-  );
+function writeToDisk(migrations: { [key: string]: MigrationData }, directory: string) {
+  fs.writeFileSync(directory, JSON.stringify(Object.values(migrations), null, 2));
 }
 
 type Deposit = {
@@ -139,40 +101,23 @@ type MigrationData = {
   migration: null | Migration;
 };
 
-task(
-  "generateBondingMigrationData",
-  "Extract the staking state from the bonding contract V1 for the V2 migration"
-)
-  .addPositionalParam(
-    "path",
-    "The path to store migration data",
-    `./${DEFAULT_OUTPUT_NAME}`,
-    types.string
-  )
+task("generateBondingMigrationData", "Extract the staking state from the bonding contract V1 for the V2 migration")
+  .addPositionalParam("path", "The path to store migration data", `./${DEFAULT_OUTPUT_NAME}`, types.string)
   .setAction(async (taskArgs: CliArgs, { ethers }) => {
-    const bondingContract = (await ethers.getContractAt(
-      "Bonding",
-      BONDING_CONTRACT_ADDRESS
-    )) as Bonding;
+    const bondingContract = (await ethers.getContractAt("Bonding", BONDING_CONTRACT_ADDRESS)) as Bonding;
 
     console.log("Arguments: ", taskArgs);
-    if (!process.env.API_KEY_ETHERSCAN)
-      throw new Error("API_KEY_ETHERSCAN environment variable must be set");
+    if (!process.env.API_KEY_ETHERSCAN) throw new Error("API_KEY_ETHERSCAN environment variable must be set");
 
     const parsedPath = path.parse(taskArgs.path);
-    if (!fs.existsSync(parsedPath.dir))
-      throw new Error(`Path ${parsedPath.dir} does not exist`);
+    if (!fs.existsSync(parsedPath.dir)) throw new Error(`Path ${parsedPath.dir} does not exist`);
 
     try {
       const response = await fetchEtherscanBondingContract();
 
       const transactions = parseTransactions(bondingContract, response.result);
-      const deposits = transactions.filter(
-        (t) => !t.isError && t.name === "deposit"
-      );
-      const withdraws = transactions.filter(
-        (t) => !t.isError && t.name === "withdraw"
-      );
+      const deposits = transactions.filter((t) => !t.isError && t.name === "deposit");
+      const withdraws = transactions.filter((t) => !t.isError && t.name === "withdraw");
 
       // Get all the bonding share IDs and values for each transaction ID
 
@@ -181,10 +126,7 @@ task(
       } = {};
 
       (await fetchTransferSingleEvents()).result.forEach((ev) => {
-        const data = ethers.utils.defaultAbiCoder.decode(
-          ["uint256", "uint256"],
-          ev.data
-        ) as [BigNumber, BigNumber];
+        const data = ethers.utils.defaultAbiCoder.decode(["uint256", "uint256"], ev.data) as [BigNumber, BigNumber];
 
         bondingShareData[ev.transactionHash] = {
           id: data[0].toString(),
@@ -219,11 +161,8 @@ task(
           bondingShareAmount: tx.inputs._sharesAmount,
         };
 
-        const deposit = migrations[tx.from].deposits.find(
-          (d) => d.bondingShareId === withdraw.bondingShareId
-        );
-        if (!deposit)
-          throw new Error("All withdraws should have been deposited");
+        const deposit = migrations[tx.from].deposits.find((d) => d.bondingShareId === withdraw.bondingShareId);
+        if (!deposit) throw new Error("All withdraws should have been deposited");
 
         deposit.withdraw = withdraw;
         if (deposit.withdraw.bondingShareAmount < deposit.bondingShareAmount) {
@@ -234,17 +173,8 @@ task(
       Object.values(migrations).forEach((m) => {
         const depositsToMigrate = m.deposits.filter((d) => !d.withdraw);
         if (depositsToMigrate.length > 0) {
-          const lpsAmount = depositsToMigrate.reduce(
-            (t, d) => t.add(BigNumber.from(d.lpsAmount)),
-            BigNumber.from(0)
-          );
-          const weeks = depositsToMigrate
-            .reduce(
-              (t, d) =>
-                t.add(BigNumber.from(d.weeks).mul(BigNumber.from(d.lpsAmount))),
-              BigNumber.from(0)
-            )
-            .div(lpsAmount);
+          const lpsAmount = depositsToMigrate.reduce((t, d) => t.add(BigNumber.from(d.lpsAmount)), BigNumber.from(0));
+          const weeks = depositsToMigrate.reduce((t, d) => t.add(BigNumber.from(d.weeks).mul(BigNumber.from(d.lpsAmount))), BigNumber.from(0)).div(lpsAmount);
 
           migrations[m.address].migration = {
             lpsAmount: lpsAmount.toString(),

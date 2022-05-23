@@ -2,14 +2,8 @@ import { task } from "hardhat/config";
 import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
 import pressAnyKey from "../../utils/flow";
 
-task(
-  "excessdollardistribution",
-  "excessdollardistribution deployment"
-).setAction(
-  async (
-    taskArgs: { amount: string; pushhigher: boolean },
-    { ethers, deployments }
-  ) => {
+task("excessdollardistribution", "excessdollardistribution deployment").setAction(
+  async (taskArgs: { amount: string; pushhigher: boolean }, { ethers, deployments }) => {
     const net = await ethers.provider.getNetwork();
     const accounts = await ethers.getSigners();
     const adminAdr = await accounts[0].getAddress();
@@ -28,8 +22,7 @@ task(
       "0x4DA97a8b831C345dBe6d16FF7432DF2b7b776d98"
     )) as UbiquityAlgorithmicDollarManager;
 
-    const mgrExcessDollarsDistributor =
-      await manager.getExcessDollarsDistributor(debtCouponMgrAdr);
+    const mgrExcessDollarsDistributor = await manager.getExcessDollarsDistributor(debtCouponMgrAdr);
 
     console.warn(
       `we will deploy a new ExcessDollarDistributor
@@ -45,21 +38,13 @@ task(
       log: true,
     };
 
-    const exDollaDistrib = await deployments.deploy(
-      "ExcessDollarsDistributor",
-      {
-        args: [manager.address],
-        ...opts,
-      }
-    );
-    console.log(
-      `new ExcessDollarsDistributor address:${exDollaDistrib.address} `
-    );
+    const exDollaDistrib = await deployments.deploy("ExcessDollarsDistributor", {
+      args: [manager.address],
+      ...opts,
+    });
+    console.log(`new ExcessDollarsDistributor address:${exDollaDistrib.address} `);
     console.log(`will set the address to the manager `);
-    const tx = await manager.setExcessDollarsDistributor(
-      debtCouponMgrAdr,
-      exDollaDistrib.address
-    );
+    const tx = await manager.setExcessDollarsDistributor(debtCouponMgrAdr, exDollaDistrib.address);
 
     console.log(`  waiting for confirmation`);
     const receipt = tx.wait(1);
@@ -70,8 +55,7 @@ task(
 
         `
     );
-    const newExcessDollarsDistributor =
-      await manager.getExcessDollarsDistributor(debtCouponMgrAdr);
+    const newExcessDollarsDistributor = await manager.getExcessDollarsDistributor(debtCouponMgrAdr);
     console.log(`new ExcessDollarDistributor ${newExcessDollarsDistributor} for debtManager ${debtCouponMgrAdr}
                 setup into the manager
         `);

@@ -1,12 +1,14 @@
-import { task } from "hardhat/config";
 import "@nomiclabs/hardhat-waffle";
+import { ActionType } from "hardhat/types";
 
-// follows ETH/BTC's BIP 39 protocol
-// https://iancoleman.io/bip39/
-// and matches the one hardhat uses when using { accounts: { mnemonic }}
-task("accountsFromMnemonic", "prints the first few accounts of a mnemonic")
-  .addParam("mnemonic", "The mnemonic used for BIP39 key derivation: See https://iancoleman.io/bip39")
-  .setAction(async (taskArgs: { mnemonic: string }, { ethers }) => {
+export const description = "prints the first few accounts of a mnemonic";
+export const params = {
+  mnemonic: "The mnemonic used for BIP39 key derivation: See https://iancoleman.io/bip39"
+}
+
+export function action(): ActionType<any> {
+
+  return async function main(taskArgs: { mnemonic: string }, { ethers }) {
     const { mnemonic } = taskArgs;
 
     if (!mnemonic) {
@@ -21,4 +23,5 @@ task("accountsFromMnemonic", "prints the first few accounts of a mnemonic")
       const key = masterKey.derivePath(getPathForIndex(index));
       console.log(`Key ${getPathForIndex(index)}: ${key.address} (PK: ${key.publicKey}) (sk: ${key.privateKey})`);
     });
-  });
+  };
+}

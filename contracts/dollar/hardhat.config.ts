@@ -13,20 +13,11 @@ import "solidity-coverage";
 if (fs.existsSync(path.join(__dirname, "artifacts/types"))) {
   import("./tasks/index");
 } else {
-  console.warn(
-    "Tasks loading skipped until compilation artifacts are available"
-  );
+  console.warn("Tasks loading skipped until compilation artifacts are available");
 }
 
 dotenv.config();
-const {
-  MNEMONIC,
-  UBQ,
-  API_KEY_ALCHEMY,
-  API_KEY_ETHERSCAN,
-  REPORT_GAS,
-  API_KEY_COINMARKETCAP,
-} = process.env;
+const { MNEMONIC, UBQ, API_KEY_ALCHEMY, API_KEY_ETHERSCAN, REPORT_GAS, API_KEY_COINMARKETCAP } = process.env;
 
 const accounts = {
   mnemonic: `${MNEMONIC || "test test test test test test test test test test test junk"}`, // use default accounts
@@ -78,8 +69,7 @@ const config: HardhatUserConfig = {
     MetaPoolAddress: "0x20955cb69ae1515962177d164dfc9522feef567e",
     BondingAddress: "0x831e3674Abc73d7A3e9d8a9400AF2301c32cEF0C",
     BondingV2Address: "0xdAC17F958D2ee523a2206206994597C13D831ec7", // FAKE ADDRESS, TO BE REPLACED AFTER V2 DEPLOYMENT
-    UbiquityAlgorithmicDollarManagerAddress:
-      "0x4DA97a8b831C345dBe6d16FF7432DF2b7b776d98",
+    UbiquityAlgorithmicDollarManagerAddress: "0x4DA97a8b831C345dBe6d16FF7432DF2b7b776d98",
     jarUSDCAddr: "0xEB801AB73E9A2A482aA48CaCA13B1954028F4c94",
     jarYCRVLUSDaddr: "0x4fFe73Cf2EEf5E8C8E0E10160bCe440a029166D2",
     strategyYearnUsdcV2: "0xEecEE2637c7328300846622c802B2a29e65f3919",
@@ -136,7 +126,8 @@ const config: HardhatUserConfig = {
     target: "ethers-v5",
   },
   gasReporter: {
-    enabled: REPORT_GAS === "true", currency: "USD",
+    enabled: REPORT_GAS === "true",
+    currency: "USD",
     gasPrice: 60,
     onlyCalledMethods: true,
     coinmarketcap: `${API_KEY_COINMARKETCAP || ""}`,
@@ -150,7 +141,6 @@ const config: HardhatUserConfig = {
 
 export default config;
 
-
 function getAlchemyRpc(network: string, lastChance?: boolean): string {
   // This will try and resolve alchemy key related issues
   // first it will read the key value
@@ -160,7 +150,7 @@ function getAlchemyRpc(network: string, lastChance?: boolean): string {
     return `https://eth-${network}.alchemyapi.io/v2/${process.env.API_KEY_ALCHEMY}`;
   }
   if (lastChance) {
-    throw new Error("Please set the API_KEY_ALCHEMY environment variable to your Alchemy API key")
+    throw new Error("Please set the API_KEY_ALCHEMY environment variable to your Alchemy API key");
   } else {
     // didn't find API_KEY_ALCHEMY, try symlinking from .env above
     fs.symlinkSync("../../.env", "./");

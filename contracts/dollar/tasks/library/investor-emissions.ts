@@ -1,15 +1,13 @@
 import "@nomiclabs/hardhat-waffle";
-import { task } from "hardhat/config";
 import { ActionType } from "hardhat/types/runtime";
 import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
 
 export const description = "Helps distribute investor emissions";
 
-export function renderAction(): ActionType<any> {
+export function action(): ActionType<any> {
+  // ": ActionType<any>" is required for typings to pass on runtime.
 
-  interface Args { receiver: string; manager: string }
-
-  return async function main(taskArgs: Args, { ethers }) {
+  return async function main(taskArgs, { ethers }) {
     const network = await ethers.provider.getNetwork();
     const managerAdr = "0x4DA97a8b831C345dBe6d16FF7432DF2b7b776d98";
     const debtCouponMgrAdr = "0x432120Ad63779897A424f7905BA000dF38A74554";
@@ -17,10 +15,7 @@ export function renderAction(): ActionType<any> {
       console.warn("You are running the   task with Hardhat network");
     }
     console.log(`net chainId: ${network.chainId}  `);
-    const manager = await ethers.getContractAt(
-      "UbiquityAlgorithmicDollarManager",
-      managerAdr
-    ) as UbiquityAlgorithmicDollarManager;
+    const manager = (await ethers.getContractAt("UbiquityAlgorithmicDollarManager", managerAdr)) as UbiquityAlgorithmicDollarManager;
 
     const spreadsheet = {
       [await manager.twapOracleAddress()]: "mgrtwapOracleAddress",
@@ -43,6 +38,5 @@ export function renderAction(): ActionType<any> {
     };
 
     console.table(spreadsheet);
-
   };
 }
