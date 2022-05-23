@@ -1,18 +1,9 @@
-import { task } from "hardhat/config"; import "@nomiclabs/hardhat-waffle";
 import { ActionType } from "hardhat/types/runtime";
+import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
 
-const filename = __filename.split("/").pop()?.split(".").shift() as string; // dynamically name task based on filename
-const description = "Get info about manager contract's address"; // set the task's description
+export default function renderAction(): ActionType<any> {
 
-task(filename, description).setAction(
-  renderAction()
-);
-
-import { UbiquityAlgorithmicDollarManager } from "../artifacts/types/UbiquityAlgorithmicDollarManager";
-
-function renderAction(): ActionType<any> {
-
-  interface Args { receiver: string; manager: string }
+  interface Args { receiver: string; manager: string; }
 
   return async function main(taskArgs: Args, { ethers }) {
     const network = await ethers.provider.getNetwork();
