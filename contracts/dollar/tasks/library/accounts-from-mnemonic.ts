@@ -1,27 +1,18 @@
 import "@nomiclabs/hardhat-waffle";
 import { ActionType } from "hardhat/types";
 
-export const description = "prints the first few accounts of a mnemonic";
-export const params = {
-  mnemonic: "The mnemonic used for BIP39 key derivation: See https://iancoleman.io/bip39"
-}
-
-export function action(): ActionType<any> {
-
-  return async function main(taskArgs: { mnemonic: string }, { ethers }) {
+module.exports = {
+  "description": "prints the first few accounts of a mnemonic",
+  "params": { mnemonic: "The mnemonic used for BIP39 key derivation: See https://iancoleman.io/bip39" },
+  "action": (): ActionType<any> => async function main(taskArgs: { mnemonic: string }, { ethers }) {
     const { mnemonic } = taskArgs;
-
-    if (!mnemonic) {
-      throw new Error(`Missing task argument --mnemonic `);
-    }
+    if (!mnemonic) { throw new Error(`Missing task argument --mnemonic `); }
     const masterKey = await Promise.resolve(ethers.utils.HDNode.fromMnemonic(mnemonic));
-
     // "m/44'/60'/0'/0/0" first account
     const getPathForIndex = (index: number) => `m/44'/60'/0'/0/${index}`;
-
     Array.from({ length: 5 }).forEach((_, index) => {
       const key = masterKey.derivePath(getPathForIndex(index));
       console.log(`Key ${getPathForIndex(index)}: ${key.address} (PK: ${key.publicKey}) (sk: ${key.privateKey})`);
     });
-  };
+  }
 }
