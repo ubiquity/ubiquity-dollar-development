@@ -2,13 +2,13 @@ import { task, types } from "hardhat/config";
 import "@nomiclabs/hardhat-waffle";
 import { Signer } from "ethers";
 
-import { ICurveFactory } from "../artifacts/types/ICurveFactory";
-import { UbiquityAlgorithmicDollar } from "../artifacts/types/UbiquityAlgorithmicDollar";
-import { UbiquityAlgorithmicDollarManager } from "../artifacts/types/UbiquityAlgorithmicDollarManager";
-import { IMetaPool } from "../artifacts/types/IMetaPool";
-import { ERC20 } from "../artifacts/types/ERC20";
-import pressAnyKey from "../utils/flow";
-import { TWAPOracle } from "../artifacts/types/TWAPOracle";
+import { ICurveFactory } from "../../artifacts/types/ICurveFactory";
+import { UbiquityAlgorithmicDollar } from "../../artifacts/types/UbiquityAlgorithmicDollar";
+import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
+import { IMetaPool } from "../../artifacts/types/IMetaPool";
+import { ERC20 } from "../../artifacts/types/ERC20";
+import pressAnyKey from "../../utils/flow";
+import { TWAPOracle } from "../../artifacts/types/TWAPOracle";
 
 task(
   "adminRemoveLiquidity",
@@ -50,9 +50,8 @@ task(
           params: [
             {
               forking: {
-                jsonRpcUrl: `https://eth-mainnet.alchemyapi.io/v2/${
-                  process.env.API_KEY_ALCHEMY || ""
-                }`,
+                jsonRpcUrl: `https://eth-mainnet.alchemyapi.io/v2/${process.env.API_KEY_ALCHEMY || ""
+                  }`,
                 blockNumber,
               },
             },
@@ -204,11 +203,11 @@ task(
 
       let tx = await metaPool
         .connect(admin)
-        ["remove_liquidity_one_coin(uint256,int128,uint256)"](
-          amount,
-          coinIndex,
-          0
-        );
+      ["remove_liquidity_one_coin(uint256,int128,uint256)"](
+        amount,
+        coinIndex,
+        0
+      );
       console.log(`removed liquidity waiting for confirmation`);
       let receipt = tx.wait(1);
       console.log(
@@ -271,7 +270,7 @@ task(
           `);
       tx = await metaPool
         .connect(admin)
-        ["remove_liquidity_one_coin(uint256,int128,uint256)"](1, coinIndex, 0);
+      ["remove_liquidity_one_coin(uint256,int128,uint256)"](1, coinIndex, 0);
       console.log(`We execute another action (swap,deposit,withdraw etc..)
                    on the curve pool to update the twap price`);
       receipt = tx.wait(1);

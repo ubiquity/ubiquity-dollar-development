@@ -10,17 +10,17 @@ import {
   TokenAmount,
   TradeType,
 } from "@uniswap/sdk";
-import { UbiquityAlgorithmicDollar } from "../artifacts/types/UbiquityAlgorithmicDollar";
-import { UbiquityGovernance } from "../artifacts/types/UbiquityGovernance";
-import { UbiquityAutoRedeem } from "../artifacts/types/UbiquityAutoRedeem";
-import { UbiquityAlgorithmicDollarManager } from "../artifacts/types/UbiquityAlgorithmicDollarManager";
-import { DollarMintingCalculator } from "../artifacts/types/DollarMintingCalculator";
-import { DebtCoupon } from "../artifacts/types/DebtCoupon";
-import { BondingShare } from "../artifacts/types/BondingShare";
-import { IMetaPool } from "../artifacts/types/IMetaPool";
-import { SushiSwapPool } from "../artifacts/types/SushiSwapPool";
-import { IUniswapV2Pair } from "../artifacts/types/IUniswapV2Pair";
-import { TWAPOracle } from "../artifacts/types/TWAPOracle";
+import { UbiquityAlgorithmicDollar } from "../../artifacts/types/UbiquityAlgorithmicDollar";
+import { UbiquityGovernance } from "../../artifacts/types/UbiquityGovernance";
+import { UbiquityAutoRedeem } from "../../artifacts/types/UbiquityAutoRedeem";
+import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
+import { DollarMintingCalculator } from "../../artifacts/types/DollarMintingCalculator";
+import { DebtCoupon } from "../../artifacts/types/DebtCoupon";
+import { BondingShare } from "../../artifacts/types/BondingShare";
+import { IMetaPool } from "../../artifacts/types/IMetaPool";
+import { SushiSwapPool } from "../../artifacts/types/SushiSwapPool";
+import { IUniswapV2Pair } from "../../artifacts/types/IUniswapV2Pair";
+import { TWAPOracle } from "../../artifacts/types/TWAPOracle";
 // This file is only here to make interacting with the Dapp easier,
 // feel free to ignore it if you don't need it.
 

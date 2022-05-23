@@ -1,6 +1,6 @@
 import { task } from "hardhat/config";
-import { UbiquityAlgorithmicDollarManager } from "../artifacts/types/UbiquityAlgorithmicDollarManager";
-import pressAnyKey from "../utils/flow";
+import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
+import pressAnyKey from "../../utils/flow";
 
 task(
   "excessdollardistribution",

@@ -1,11 +1,11 @@
 import { task } from "hardhat/config";
 import "@nomiclabs/hardhat-waffle";
-import { ICurveFactory } from "../artifacts/types/ICurveFactory";
-import { UbiquityAlgorithmicDollar } from "../artifacts/types/UbiquityAlgorithmicDollar";
-import { UbiquityAlgorithmicDollarManager } from "../artifacts/types/UbiquityAlgorithmicDollarManager";
-import { IMetaPool } from "../artifacts/types/IMetaPool";
-import { TWAPOracle } from "../artifacts/types/TWAPOracle";
-import { DollarMintingCalculator } from "../artifacts/types/DollarMintingCalculator";
+import { ICurveFactory } from "../../artifacts/types/ICurveFactory";
+import { UbiquityAlgorithmicDollar } from "../../artifacts/types/UbiquityAlgorithmicDollar";
+import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
+import { IMetaPool } from "../../artifacts/types/IMetaPool";
+import { TWAPOracle } from "../../artifacts/types/TWAPOracle";
+import { DollarMintingCalculator } from "../../artifacts/types/DollarMintingCalculator";
 // This file is only here to make interacting with the Dapp easier,
 // feel free to ignore it if you don't need it.
 

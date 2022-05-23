@@ -1,5 +1,5 @@
 import { ActionType } from "hardhat/types/runtime";
-import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
+import { UbiquityAlgorithmicDollarManager } from "../../../artifacts/types/UbiquityAlgorithmicDollarManager";
 
 export default function renderAction(): ActionType<any> {
 

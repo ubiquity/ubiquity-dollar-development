@@ -9,10 +9,10 @@ import "@nomiclabs/hardhat-waffle";
 import { expect } from "chai";
 import { BigNumber, Signer } from "ethers";
 
-import { BondingShareV2 } from "../artifacts/types/BondingShareV2";
-import { MasterChefV2 } from "../artifacts/types/MasterChefV2";
-import { BondingV2 } from "../artifacts/types/BondingV2";
-import { UbiquityAlgorithmicDollarManager } from "../artifacts/types/UbiquityAlgorithmicDollarManager";
+import { BondingShareV2 } from "../../artifacts/types/BondingShareV2";
+import { MasterChefV2 } from "../../artifacts/types/MasterChefV2";
+import { BondingV2 } from "../../artifacts/types/BondingV2";
+import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
 
 const lastBlock = 13004900;
 
@@ -145,9 +145,8 @@ task("simulateMigrate", "simulate migration of one address")
         params: [
           {
             forking: {
-              jsonRpcUrl: `https://eth-mainnet.alchemyapi.io/v2/${
-                process.env.API_KEY_ALCHEMY || ""
-              }`,
+              jsonRpcUrl: `https://eth-mainnet.alchemyapi.io/v2/${process.env.API_KEY_ALCHEMY || ""
+                }`,
               blockNumber,
             },
           },

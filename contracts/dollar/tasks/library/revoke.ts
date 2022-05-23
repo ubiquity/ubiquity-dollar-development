@@ -1,6 +1,6 @@
 import { task } from "hardhat/config";
 import "@nomiclabs/hardhat-waffle";
-import { UbiquityAlgorithmicDollarManager } from "../artifacts/types/UbiquityAlgorithmicDollarManager";
+import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
 // This file is only here to make interacting with the Dapp easier,
 // feel free to ignore it if you don't need it.
 
@@ -14,8 +14,8 @@ task("revoke", "revoke Minter Burner role of an address")
       if (net.name === "hardhat") {
         console.warn(
           "You are running the faucet task with Hardhat network, which" +
-            "gets automatically created and destroyed every time. Use the Hardhat" +
-            " option '--network localhost'"
+          "gets automatically created and destroyed every time. Use the Hardhat" +
+          " option '--network localhost'"
         );
       }
       console.log(`net chainId: ${net.chainId}  `);

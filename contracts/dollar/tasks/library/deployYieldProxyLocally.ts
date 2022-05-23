@@ -1,10 +1,10 @@
 import { task } from "hardhat/config";
 import "@nomiclabs/hardhat-waffle";
-import { ERC1155Ubiquity, ERC20 } from "../artifacts/types";
-import { UbiquityAlgorithmicDollarManager } from "../artifacts/types/UbiquityAlgorithmicDollarManager";
-import { BondingShareV2 } from "../artifacts/types/BondingShareV2";
-import { YieldProxy } from "../artifacts/types/YieldProxy";
-import { IJar } from "../artifacts/types/IJar";
+import { ERC1155Ubiquity, ERC20 } from "../../artifacts/types";
+import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
+import { BondingShareV2 } from "../../artifacts/types/BondingShareV2";
+import { YieldProxy } from "../../artifacts/types/YieldProxy";
+import { IJar } from "../../artifacts/types/IJar";
 
 const NETWORK_ADDRESS = "http://localhost:8545";
 const accountWithWithdrawableBond =

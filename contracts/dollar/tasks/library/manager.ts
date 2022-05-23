@@ -8,7 +8,7 @@ task(filename, description).setAction(
   renderAction()
 );
 
-import { UbiquityAlgorithmicDollarManager } from "../artifacts/types/UbiquityAlgorithmicDollarManager";
+import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
 
 function renderAction(): ActionType<any> {
 
