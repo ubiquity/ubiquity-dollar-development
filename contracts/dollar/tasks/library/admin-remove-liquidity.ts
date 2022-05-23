@@ -1,6 +1,5 @@
 import "@nomiclabs/hardhat-waffle";
 import { Signer } from "ethers";
-import { task, types } from "hardhat/config";
 import { ActionType } from "hardhat/types";
 import { ERC20 } from "../../artifacts/types/ERC20";
 import { ICurveFactory } from "../../artifacts/types/ICurveFactory";
@@ -11,9 +10,9 @@ import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/Ubiquity
 import pressAnyKey from "../../utils/flow";
 interface TaskArgs {
   amount: string;
-  pushhigher: boolean;
-  dryrun: boolean;
-  blockheight: number;
+  pushHigher: boolean;
+  dryRun: boolean;
+  blockHeight: number;
 }
 
 module.exports = {
@@ -22,16 +21,15 @@ module.exports = {
     "amount": "The amount of uAD-3CRV LP token to be withdrawn"
   },
   "optionalParams": {
-    "pushhigher": "if false will withdraw 3CRV to push uAD price lower",
-    "dryrun": "if false will use account 0 to execute price reset",
-    "blockheight": "block height for the fork",
+    "pushHigher": "if false will withdraw 3CRV to push uAD price lower",
+    "dryRun": "if false will use account 0 to execute price reset",
+    "blockHeight": "block height for the fork",
   },
-  "action": (): ActionType<any> => async function action(taskArgs: TaskArgs,
-    { ethers, network, getNamedAccounts }) {
+  "action": (): ActionType<any> => async (taskArgs: TaskArgs, { ethers, network, getNamedAccounts }) => {
 
-    if (!taskArgs.pushhigher) taskArgs.pushhigher = true
-    if (!taskArgs.dryrun) taskArgs.dryrun = true
-    if (!taskArgs.blockheight) taskArgs.blockheight = 13135453
+    if (!taskArgs.pushHigher) taskArgs.pushHigher = true
+    if (!taskArgs.dryRun) taskArgs.dryRun = true
+    if (!taskArgs.blockHeight) taskArgs.blockHeight = 13135453
 
     const net = await ethers.provider.getNetwork();
     const resetFork = async (blockNumber: number): Promise<void> => {
@@ -50,8 +48,8 @@ module.exports = {
 
     let admin: Signer;
     let adminAdr: string;
-    if (taskArgs.dryrun) {
-      await resetFork(taskArgs.blockheight);
+    if (taskArgs.dryRun) {
+      await resetFork(taskArgs.blockHeight);
       adminAdr = "0xefC0e701A824943b469a694aC564Aa1efF7Ab7dd";
       const impersonate = async (account: string): Promise<Signer> => {
         await network.provider.request({
@@ -104,7 +102,7 @@ module.exports = {
 
     const expectedCRVStr = ethers.utils.formatEther(expectedCRV);
     let coinIndex = 0;
-    if (taskArgs.pushhigher) {
+    if (taskArgs.pushHigher) {
       console.warn(`we will remove :${taskArgs.amount} uAD-3CRV LP token from your ${LPBal} uAD3CRV balance
                       for an expected ${expectedUADStr} uAD unilateraly
                       This will have the immediate effect of
