@@ -13,16 +13,12 @@ import { UbiquityAlgorithmicDollar } from "../../artifacts/types/UbiquityAlgorit
 import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
 import { UbiquityAutoRedeem } from "../../artifacts/types/UbiquityAutoRedeem";
 import { UbiquityGovernance } from "../../artifacts/types/UbiquityGovernance";
-interface TaskArgs {
-  manager: string;
-  receiver: string;
-}
 
 module.exports = {
   description: "Displays token information",
   action:
     (): ActionType<any> =>
-    async (_taskArgs: TaskArgs, { ethers }) => {
+    async (_taskArgs, { ethers }) => {
       const net = await ethers.provider.getNetwork();
 
       if (net.name === "hardhat") {

@@ -2,20 +2,14 @@ import "@nomiclabs/hardhat-waffle";
 import { ActionType } from "hardhat/types";
 import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
 
-interface TaskArgs {
-  manager: string;
-  receiver: string;
-}
+const params = { receiver: "The address that will be revoked", manager: "The address of uAD Manager" };
 
 module.exports = {
   description: "revoke Minter Burner role of an address",
-  params: {
-    receiver: "The address that will be revoked",
-    manager: "The address of uAD Manager",
-  },
+  params,
   action:
     (): ActionType<any> =>
-    async (taskArgs: TaskArgs, { ethers }) => {
+    async (taskArgs: typeof params, { ethers }) => {
       const net = await ethers.provider.getNetwork();
 
       if (net.name === "hardhat") {

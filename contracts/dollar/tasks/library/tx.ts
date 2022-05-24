@@ -1,15 +1,14 @@
 import "@nomiclabs/hardhat-waffle";
 import { ActionType } from "hardhat/types";
-interface TaskArgs {
-  hash: string;
-}
+
+const params = { hash: "The transaction's hash" };
 
 module.exports = {
   description: "Prints the detail for the transaction hash",
-  params: { hash: "The transaction's hash" },
+  params,
   action:
     (): ActionType<any> =>
-    async (taskArgs: TaskArgs, { ethers }) => {
+    async (taskArgs: typeof params, { ethers }) => {
       const provider = ethers.providers.getDefaultProvider();
       let receipt = (await provider.getTransactionReceipt(taskArgs.hash)) as any;
       delete receipt.logsBloom as any;
