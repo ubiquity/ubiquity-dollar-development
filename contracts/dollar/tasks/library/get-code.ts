@@ -5,7 +5,7 @@ import * as fs from "fs";
 module.exports = {
   description: "gets the code of an address",
   positionalParam: {
-    address: "The address of the contract",
+    address: ["The address of the contract"],
   },
   optionalParam: {
     path: "The path to store the contract", // , `contract.evm`]

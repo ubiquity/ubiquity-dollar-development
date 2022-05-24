@@ -41,7 +41,7 @@ export function taskMounter(filename: string) {
     if (optionalParams) {
       // import the optional params
       // optional
-      Object.entries(optionalParams).forEach(([key, value]) => extension.addOptionalParam(key, value));
+      Object.entries(optionalParams).forEach((params) => extension.addOptionalParam.bind(params));
     }
 
     if (positionalParams) {
