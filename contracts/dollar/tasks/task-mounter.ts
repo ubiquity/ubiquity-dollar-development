@@ -1,13 +1,7 @@
 import { task } from "hardhat/config";
-import { ActionType } from "hardhat/types";
+import { ActionType, ConfigurableTaskDefinition } from "hardhat/types";
 import path from "path";
 import { libraryDirectory } from "./index";
-interface ImportedTasksArgs {
-  action: () => ActionType<any>;
-  description: string;
-  params?: { [key: string]: string }
-  optionalParams?: { [key: string]: string }
-}
 
 export function taskMounter(filename: string) {
   const pathToFile = path.join(libraryDirectory, filename);
@@ -15,39 +9,74 @@ export function taskMounter(filename: string) {
 
   import(pathToFile).then(extendHardhatCli);
 
-  function extendHardhatCli(module: ImportedTasksArgs) {
+  function extendHardhatCli(module: ImportedTasksArgs): void {
+    let { action, description, params, optionalParams } = module;
 
-    let { action, description, params, optionalParams } = module
+    const extension = task(taskName, description);
 
-    // import the task
-    // required
     if (!action) {
+      // import the task
+      // required
       console.error(`\t${taskName} has no action export`);
-      action = () => {
-        throw new Error("No function found");
-      };
+      action = () => { throw new Error("No function found") }
     }
 
-    // import the description
-    // optional
     if (!description) {
+      // import the description
+      // optional
       console.warn(`\t${taskName} has no description`);
       description = "No description found";
     }
 
-    // import the params
-    // optional
     if (params) {
-      Object.entries(params).forEach(([key, value]) => task(taskName, description).addParam(key, value));
+      // import the required params
+      // optional; if there are none this can still run
+      paramsHandler(params, extension);
     }
 
-    // import the optional params
-    // optional
     if (optionalParams) {
-      Object.entries(optionalParams).forEach(([key, value]) => task(taskName, description).addOptionalParam(key, value));
+      // import the optional params
+      // optional
+      Object.entries(optionalParams).forEach(([key, value]) => extension.addOptionalParam(key, value));
     }
 
-    task(taskName, description).setAction(action());
+    extension.setAction(action());
+  }
+}
+
+function paramsHandler(params: { [key: string]: string }, extension: ConfigurableTaskDefinition) {
+  // FIXME this needs to be mapped all at once
+  // relevant if theres more than one required param
+
+  const requiredArgsEntries = Object.entries(params);
+
+  type TestType = [['receiver', 'The address that will be revoked'], ['manager', 'The address of uAD Manager']];
+
+  if ((requiredArgsEntries as TestType).length > 1) {
+
+    console.log(requiredArgsEntries);
+
+    extension
+      .addParam(requiredArgsEntries[0][0], requiredArgsEntries[0][1])
+      .addParam(requiredArgsEntries[1][0], requiredArgsEntries[1][1]);
+
+    // const metaprogrammingarray = requiredArgsEntries.map((arg, index: number) => {
+
+    //   const [name, description] = arg;
+    //   return `.addParam(requiredArgsEntries[${index}][0], requiredArgsEntries[${index}][1])`;
+    // });
+
+    // const logic = [`extension`, metaprogrammingarray.join("\n")].join("\n");
+    // console.log(logic);
+    // console.log(eval(logic));
+
 
   }
+}
+
+interface ImportedTasksArgs {
+  action: () => ActionType<any>;
+  description: string;
+  params?: { [key: string]: string };
+  optionalParams?: { [key: string]: string };
 }
