@@ -9,7 +9,7 @@ task("accounts-from-mnemonic", "prints the first few accounts of a mnemonic")
     "mnemonic",
     "The mnemonic used for BIP39 key derivation: See https://iancoleman.io/bip39"
   )
-  .setAction(async (taskArgs: { mnemonic: string }, { ethers }) => {
+  .setAction(async (_taskArgs: { mnemonic: string }, { ethers }) => {
     const { mnemonic } = taskArgs;
 
     if (!mnemonic) {
@@ -23,8 +23,7 @@ task("accounts-from-mnemonic", "prints the first few accounts of a mnemonic")
     Array.from({ length: 5 }).forEach((_, index) => {
       const key = masterKey.derivePath(getPathForIndex(index));
       console.log(
-        `Key ${getPathForIndex(index)}: ${key.address} (PK: ${key.publicKey}) (sk: ${
-          key.privateKey
+        `Key ${getPathForIndex(index)}: ${key.address} (PK: ${key.publicKey}) (sk: ${key.privateKey
         })`
       );
     });

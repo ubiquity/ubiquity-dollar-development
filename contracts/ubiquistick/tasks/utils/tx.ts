@@ -8,7 +8,7 @@ import type {
 
 task("tx", "Prints the detail for the transaction hash")
   .addPositionalParam("hash", "The transaction's hash")
-  .setAction(async (taskArgs: { hash: string }, { ethers }) => {
+  .setAction(async (_taskArgs: { hash: string }, { ethers }) => {
     const receipt = await ethers.provider.getTransactionReceipt(taskArgs.hash);
 
     console.log(`

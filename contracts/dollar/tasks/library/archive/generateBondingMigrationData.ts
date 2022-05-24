@@ -2,8 +2,8 @@ import fs from "fs";
 import path from "path";
 import { task, types } from "hardhat/config";
 import { BigNumber, utils } from "ethers";
-import { Bonding } from "../../artifacts/types/Bonding";
-import { Transaction, TransactionEvent, EtherscanResponse, generateEtherscanQuery, generateEventLogQuery, fetchEtherscanApi } from "../../utils/etherscan";
+import { Bonding } from "../../../artifacts/types/Bonding";
+import { Transaction, TransactionEvent, EtherscanResponse, generateEtherscanQuery, generateEventLogQuery, fetchEtherscanApi } from "../../../utils/etherscan";
 
 const BONDING_CONTRACT_ADDRESS = "0x831e3674Abc73d7A3e9d8a9400AF2301c32cEF0C";
 const BONDING_SHARE_CONTRACT_ADDRESS = "0x0013B6033dd999676Dc547CEeCEA29f781D8Db17";

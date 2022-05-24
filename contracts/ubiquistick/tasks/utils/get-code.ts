@@ -5,7 +5,7 @@ import "@nomiclabs/hardhat-waffle";
 task("get-code", "gets the code of an address")
   .addPositionalParam("address", "The address of the contract")
   .addOptionalParam("path", "The path to store the contract", `contract.evm`)
-  .setAction(async (taskArgs: { address: string; path: string }, { ethers }) => {
+  .setAction(async (_taskArgs: { address: string; path: string }, { ethers }) => {
     const { address, path } = taskArgs;
 
     const { provider } = ethers;

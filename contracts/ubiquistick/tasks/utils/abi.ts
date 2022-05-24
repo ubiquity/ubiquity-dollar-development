@@ -9,7 +9,7 @@ task("abi", "Get contract abi")
      Use 'hardhat' network to get abi from compiled contract,
      either get abi of latest deployed contract`
   )
-  .setAction(async (taskArgs: { nameOrAddress: string }, { deployments, ethers }) => {
+  .setAction(async (_taskArgs: { nameOrAddress: string }, { deployments, ethers }) => {
     const { nameOrAddress } = taskArgs;
     const { utils } = ethers;
 
