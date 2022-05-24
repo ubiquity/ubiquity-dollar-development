@@ -1,7 +1,7 @@
 import { task } from "hardhat/config";
 import { ActionType, CLIArgumentType } from "hardhat/types";
 import path from "path";
-import { libraryDirectory } from "./index";
+import { libraryDirectory } from "../index";
 
 interface Params {
   [key: string]: string;
@@ -20,7 +20,7 @@ interface TaskModule {
   positionalParams?: PositionalParams;
 }
 
-import colors from "./utils/console-colors";
+import colors from "./console-colors";
 
 export function taskMounter(filename: string) {
   const pathToFile = path.join(libraryDirectory, filename);

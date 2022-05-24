@@ -1,7 +1,6 @@
-import "@nomiclabs/hardhat-waffle";
-import fs from "fs";
 import path from "path";
-import { taskMounter } from "./task-mounter";
+import { taskMounter } from "./utils/task-mounter";
+import * as fs from "fs";
 
 export const libraryDirectory = path.join(__dirname, "library");
 
