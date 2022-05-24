@@ -3,17 +3,36 @@ import { ActionType, CLIArgumentType } from "hardhat/types";
 import path from "path";
 import { libraryDirectory } from "./index";
 
+interface Params {
+  [key: string]: string;
+}
+interface OptionalParams {
+  [key: string]: string[];
+}
+interface PositionalParams {
+  [key: string]: [string, string, CLIArgumentType<string>][];
+}
+interface TaskModule {
+  action: () => ActionType<any>;
+  description?: string;
+  params?: Params;
+  optionalParams?: OptionalParams;
+  positionalParams?: PositionalParams;
+}
+
+import colors from "./utils/console-colors";
+
 export function taskMounter(filename: string) {
   const pathToFile = path.join(libraryDirectory, filename);
   let taskName = filename.split("/").pop()?.split(".").shift() as string; // dynamically name task based on filename
 
-  taskName = "_".concat(taskName); // prefix with _
+  // taskName = "_".concat(taskName); // prefix with _
+
+  taskName = colors.bright.concat(taskName).concat(colors.reset); // highlight custom tasks
 
   import(pathToFile).then(extendHardhatCli);
 
-  function extendHardhatCli(module: ImportedTasksArgs): void {
-    let { action, description, params, optionalParams, positionalParams } = module;
-
+  function extendHardhatCli({ action, description, params, optionalParams, positionalParams }: TaskModule): void {
     const extension = task(taskName, description);
 
     if (!action) {
@@ -52,18 +71,4 @@ export function taskMounter(filename: string) {
 
     extension.setAction(action());
   }
-}
-
-interface Params {
-  [key: string]: string;
-}
-interface PositionalParams {
-  [key: string]: [string, string, CLIArgumentType<string>][];
-}
-interface ImportedTasksArgs {
-  action: () => ActionType<any>;
-  description: string;
-  params?: Params;
-  optionalParams?: Params;
-  positionalParams?: PositionalParams;
 }
