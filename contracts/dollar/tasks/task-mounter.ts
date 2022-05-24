@@ -28,11 +28,12 @@ export function taskMounter(filename: string) {
 
   // taskName = "_".concat(taskName); // prefix with _
 
-  taskName = colors.bright.concat(taskName).concat(colors.reset); // highlight custom tasks
+  // taskName = colors.bright.concat(taskName).concat(colors.reset); // highlight custom tasks
 
   import(pathToFile).then(extendHardhatCli);
 
   function extendHardhatCli({ action, description, params, optionalParams, positionalParams }: TaskModule): void {
+    description ? (description = colors.bright.concat(description).concat(colors.reset)) : false; // highlight custom task descriptions
     const extension = task(taskName, description);
 
     if (!action) {
