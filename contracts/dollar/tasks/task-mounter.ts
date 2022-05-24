@@ -1,5 +1,5 @@
 import { task } from "hardhat/config";
-import { ActionType } from "hardhat/types";
+import { ActionType, CLIArgumentType } from "hardhat/types";
 import path from "path";
 import { libraryDirectory } from "./index";
 
@@ -7,12 +7,12 @@ export function taskMounter(filename: string) {
   const pathToFile = path.join(libraryDirectory, filename);
   let taskName = filename.split("/").pop()?.split(".").shift() as string; // dynamically name task based on filename
 
-  taskName = "-".concat(taskName); // prefix with -
+  taskName = "_".concat(taskName); // prefix with _
 
   import(pathToFile).then(extendHardhatCli);
 
   function extendHardhatCli(module: ImportedTasksArgs): void {
-    let { action, description, params, optionalParams } = module;
+    let { action, description, params, optionalParams, positionalParams } = module;
 
     const extension = task(taskName, description);
 
@@ -44,6 +44,12 @@ export function taskMounter(filename: string) {
       Object.entries(optionalParams).forEach(([key, value]) => extension.addOptionalParam(key, value));
     }
 
+    if (positionalParams) {
+      // import the positional params
+      // optional
+      Object.entries(positionalParams).forEach((params) => extension.addPositionalParam.bind(params));
+    }
+
     extension.setAction(action());
   }
 }
@@ -51,9 +57,13 @@ export function taskMounter(filename: string) {
 interface Params {
   [key: string]: string;
 }
+interface PositionalParams {
+  [key: string]: [string, string, CLIArgumentType<string>][];
+}
 interface ImportedTasksArgs {
   action: () => ActionType<any>;
   description: string;
   params?: Params;
   optionalParams?: Params;
+  positionalParams?: PositionalParams;
 }
