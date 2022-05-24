@@ -7,7 +7,7 @@ export function taskMounter(filename: string) {
   const pathToFile = path.join(libraryDirectory, filename);
   let taskName = filename.split("/").pop()?.split(".").shift() as string; // dynamically name task based on filename
 
-  taskName = "_".concat(taskName); // prefix with _
+  taskName = "-".concat(taskName); // prefix with -
 
   import(pathToFile).then(extendHardhatCli);
 

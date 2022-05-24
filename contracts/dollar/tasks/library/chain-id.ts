@@ -2,11 +2,11 @@ import "@nomiclabs/hardhat-waffle";
 import { ActionType } from "hardhat/types";
 
 module.exports = {
-  description: "prints the first few accounts in ethers signers",
+  description: "Prints the current chain ID",
   action:
     (): ActionType<any> =>
     async (_taskArgs, { ethers }) => {
-      const accounts = await ethers.getSigners();
-      accounts.forEach((account) => console.log(account.address));
+      const net = await ethers.provider.getNetwork();
+      console.log(`Current chain ID: ${net.chainId}`);
     },
 };
