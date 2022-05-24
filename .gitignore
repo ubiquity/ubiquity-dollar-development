@@ -46,5 +46,5 @@ typings
 /fixtures/contracts-addresses/*
 !/fixtures/contracts-addresses/.keep
 
-# not sure what this is
+# for get-code task
 contract.evm

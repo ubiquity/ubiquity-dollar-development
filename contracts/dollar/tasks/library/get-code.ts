@@ -8,7 +8,7 @@ module.exports = {
     address: ["The address of the contract"],
   },
   optionalParam: {
-    path: "The path to store the contract", // , `contract.evm`]
+    path: ["The path to store the contract", `contract.evm`],
   },
   action:
     (): ActionType<any> =>
