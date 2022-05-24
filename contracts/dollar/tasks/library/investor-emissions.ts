@@ -1,45 +1,45 @@
 import "@nomiclabs/hardhat-waffle";
+import { Signer } from "ethers";
 import { ActionType } from "hardhat/types/runtime";
-import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
+import accounts from "../../../../fixtures/named-accounts.json";
+import deployment from "../../../../fixtures/ubiquity-dollar-deployment.json";
+import { UbiquityGovernance } from "../../artifacts/types/UbiquityGovernance";
+// import { dryRunner } from "../library/price-reset/dryRunner";
 
-const managerAdr = "0x4DA97a8b831C345dBe6d16FF7432DF2b7b776d98";
-const debtCouponMgrAdr = "0x432120Ad63779897A424f7905BA000dF38A74554";
+const ubiquityGovernanceAddress = deployment.contracts.UbiquityGovernance.address;
 
 module.exports = {
   description: "Distributes investor emissions",
   action:
     (): ActionType<any> =>
-    async (_taskArgs, { ethers }) => {
-      const network = await ethers.provider.getNetwork();
+    async (_taskArgs, { ethers, network }) => {
+      const results = dryRunner({
+        network: await ethers.provider.getNetwork(),
+        ethers,
+      });
 
-      if (network.name === "hardhat") {
-        console.warn("You are running the   task with Hardhat network");
-      }
+      console.log(results);
 
-      console.log(`net chainId: ${network.chainId}  `);
+      const ubqToken = (await ethers.getContractAt("UbiquityGovernance", ubiquityGovernanceAddress)) as UbiquityGovernance;
+      const tx = await ubqToken.transfer(accounts.ubq, 1);
 
-      const manager = (await ethers.getContractAt("UbiquityAlgorithmicDollarManager", managerAdr)) as UbiquityAlgorithmicDollarManager;
-
-      const spreadsheet = {
-        [await manager.twapOracleAddress()]: "mgrtwapOracleAddress",
-        [await manager.debtCouponAddress()]: "mgrdebtCouponAddress",
-        [await manager.dollarTokenAddress()]: "mgrDollarTokenAddress",
-        [await manager.couponCalculatorAddress()]: "mgrcouponCalculatorAddress",
-        [await manager.dollarMintingCalculatorAddress()]: "mgrdollarMintingCalculatorAddress",
-        [await manager.bondingShareAddress()]: "mgrbondingShareAddress",
-        [await manager.bondingContractAddress()]: "mgrbondingContractAddress",
-        [await manager.stableSwapMetaPoolAddress()]: "mgrstableSwapMetaPoolAddress",
-        [await manager.curve3PoolTokenAddress()]: "mgrcurve3PoolTokenAddress",
-        [await manager.treasuryAddress()]: "mgrtreasuryAddress",
-        [await manager.governanceTokenAddress()]: "mgruGOVTokenAddress",
-        [await manager.sushiSwapPoolAddress()]: "mgrsushiSwapPoolAddress",
-        [await manager.masterChefAddress()]: "mgrmasterChefAddress",
-        [await manager.formulasAddress()]: "mgrformulasAddress",
-        [await manager.autoRedeemTokenAddress()]: "mgrautoRedeemTokenAddress",
-        [await manager.uarCalculatorAddress()]: "mgruarCalculatorAddress",
-        [await manager.getExcessDollarsDistributor(debtCouponMgrAdr)]: "mgrExcessDollarsDistributor",
-      };
-
-      console.table(spreadsheet);
+      console.log({ tx });
     },
 };
+
+interface Params {
+  network: any;
+  ethers: any;
+}
+
+async function dryRunner({ network, ethers }: Params) {
+  const impersonate = async (account: string): Promise<Signer> => {
+    await network.provider.request({
+      method: "hardhat_impersonateAccount",
+      params: [account],
+    });
+    return ethers.provider.getSigner(account);
+  };
+  const admin = await impersonate(ubiquityGovernanceAddress);
+  return { adminAdr: ubiquityGovernanceAddress, admin };
+}
