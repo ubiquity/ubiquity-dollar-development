@@ -7,8 +7,9 @@ const debtCouponMgrAdr = "0x432120Ad63779897A424f7905BA000dF38A74554";
 
 module.exports = {
   description: "Helps distribute investor emissions",
-  action: (): ActionType<any> =>
-    async function main(taskArgs, { ethers }) {
+  action:
+    (): ActionType<any> =>
+    async (_taskArgs, { ethers }) => {
       const network = await ethers.provider.getNetwork();
 
       if (network.name === "hardhat") {

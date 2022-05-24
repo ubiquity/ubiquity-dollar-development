@@ -1,5 +1,5 @@
 import { task } from "hardhat/config";
-import { ActionType, ConfigurableTaskDefinition } from "hardhat/types";
+import { ActionType } from "hardhat/types";
 import path from "path";
 import { libraryDirectory } from "./index";
 
@@ -46,9 +46,12 @@ export function taskMounter(filename: string) {
   }
 }
 
+interface Params {
+  [key: string]: string;
+}
 interface ImportedTasksArgs {
   action: () => ActionType<any>;
   description: string;
-  params?: { [key: string]: string };
-  optionalParams?: { [key: string]: string };
+  params?: Params;
+  optionalParams?: Params;
 }

@@ -124,5 +124,22 @@
     "typechain": "^7.0.0",
     "typescript": "^4.5.5",
     "usb": "^2.1.2"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "**/*/cache/",
+      "**/*/artifacts/",
+      "**/*/node_modules/**/*"
+    ],
+    "events": {
+      "config": "",
+      "exit": "",
+      "crash": "",
+      "restart": "clear && printf '\\033[3J'",
+      "start": "clear && printf '\\033[3J'"
+    }
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
   }
 }

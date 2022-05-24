@@ -7,7 +7,7 @@
     "install-contracts": "run-s _contracts:install:* build:contracts",
     "build": "run-s build:*",
     "build:contracts": "run-p _contracts:build:*",
-    "build:ui":"yarn next build",
+    "build:ui": "yarn next build",
     "dev": "run-p dev:*",
     "dev:contracts": "./build-scripts/dev-chain-init.sh",
     "dev:ui": "next dev",
@@ -39,7 +39,7 @@
     "events": {
       "config": "",
       "exit": "",
-      "crash": "stop",
+      "crash": "",
       "restart": "clear && printf '\\033[3J'",
       "start": "clear && printf '\\033[3J'"
     }
