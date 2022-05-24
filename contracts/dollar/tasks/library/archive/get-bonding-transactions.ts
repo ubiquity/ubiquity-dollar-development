@@ -2,8 +2,8 @@ import fs from "fs";
 import path from "path";
 import { task, types } from "hardhat/config";
 import * as ethers from "ethers";
-import * as ABI from "../../deployments/mainnet/Bonding.json"; // Contract ABI
-import { Transaction, EtherscanResponse, generateEtherscanQuery, fetchEtherscanApi } from "../../utils/etherscan";
+import * as ABI from "../../../deployments/mainnet/Bonding.json"; // Contract ABI
+import { Transaction, EtherscanResponse, generateEtherscanQuery, fetchEtherscanApi } from "../../../utils/etherscan";
 
 const inter = new ethers.utils.Interface(ABI.abi);
 
