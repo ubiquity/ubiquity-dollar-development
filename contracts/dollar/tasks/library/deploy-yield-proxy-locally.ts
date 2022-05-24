@@ -1,3 +1,4 @@
+import "hardhat-deploy";
 import "@nomiclabs/hardhat-waffle";
 import { ActionType } from "hardhat/types";
 import { IJar } from "../../artifacts/types/IJar";

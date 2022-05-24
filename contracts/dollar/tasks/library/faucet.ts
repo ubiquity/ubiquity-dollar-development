@@ -1,3 +1,4 @@
+import "hardhat-deploy";
 import "@nomiclabs/hardhat-waffle";
 import { BigNumber } from "ethers";
 import { ActionType } from "hardhat/types";
