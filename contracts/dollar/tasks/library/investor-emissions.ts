@@ -6,7 +6,7 @@ const managerAdr = "0x4DA97a8b831C345dBe6d16FF7432DF2b7b776d98";
 const debtCouponMgrAdr = "0x432120Ad63779897A424f7905BA000dF38A74554";
 
 module.exports = {
-  description: "Helps distribute investor emissions",
+  description: "Distributes investor emissions",
   action:
     (): ActionType<any> =>
     async (_taskArgs, { ethers }) => {

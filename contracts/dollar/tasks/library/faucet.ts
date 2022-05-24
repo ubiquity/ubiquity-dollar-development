@@ -1,15 +1,12 @@
-import { task } from "hardhat/config";
 import "@nomiclabs/hardhat-waffle";
 import { BigNumber } from "ethers";
-import { ERC1155Ubiquity, ERC20 } from "../../artifacts/types";
-import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
+import { ActionType } from "hardhat/types";
+import { ERC20 } from "../../artifacts/types";
 import { BondingShareV2 } from "../../artifacts/types/BondingShareV2";
+import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
 
 const NETWORK_ADDRESS = "http://localhost:8545";
 const accountWithWithdrawableBond = "0x4007ce2083c7f3e18097aeb3a39bb8ec149a341d";
-
-import "@nomiclabs/hardhat-waffle";
-import { ActionType } from "hardhat/types";
 
 module.exports = {
   description: "Sends ETH and tokens to an address",

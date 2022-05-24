@@ -19,9 +19,10 @@ interface TaskArgs {
 }
 
 module.exports = {
-  description: "Helps distribute investor emissions",
-  action: (): ActionType<any> =>
-    async function main(taskArgs: TaskArgs, { ethers }) {
+  description: "Displays token information",
+  action:
+    (): ActionType<any> =>
+    async (_taskArgs: TaskArgs, { ethers }) => {
       const net = await ethers.provider.getNetwork();
 
       if (net.name === "hardhat") {

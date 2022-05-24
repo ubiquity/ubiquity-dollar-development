@@ -13,8 +13,9 @@ module.exports = {
     receiver: "The address that will be revoked",
     manager: "The address of uAD Manager",
   },
-  action: (): ActionType<any> =>
-    async function main(taskArgs: TaskArgs, { ethers }) {
+  action:
+    (): ActionType<any> =>
+    async (taskArgs: TaskArgs, { ethers }) => {
       const net = await ethers.provider.getNetwork();
 
       if (net.name === "hardhat") {

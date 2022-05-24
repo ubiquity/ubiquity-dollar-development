@@ -8,8 +8,9 @@ interface TaskArgs {
 module.exports = {
   description: "prints the first few accounts of a mnemonic",
   params: { mnemonic: "The mnemonic used for BIP39 key derivation: See https://iancoleman.io/bip39" },
-  action: (): ActionType<any> =>
-    async function main(taskArgs: TaskArgs, { ethers }) {
+  action:
+    (): ActionType<any> =>
+    async (taskArgs: TaskArgs, { ethers }) => {
       const { mnemonic } = taskArgs;
       if (!mnemonic) {
         throw new Error(`Missing task argument --mnemonic `);
