@@ -1,6 +1,32 @@
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/.git": true,
+    "**/.parcel-cache": true,
+    "**/.vercel": true,
+    "**/dist": true,
+    "**/node_modules": true
+  },
+  "json.schemas": [
+    {
+      "fileMatch": ["manifest.json"],
+      "url": "http://json.schemastore.org/chrome-manifest"
+    },
+    {
+      "fileMatch": ["tsconfig.json"],
+      "url": "http://json.schemastore.org/tsconfig"
+    },
+    {
+      "fileMatch": [".eslintrc"],
+      "url": "http://json.schemastore.org/eslintrc"
+    },
+    {
+      "fileMatch": [".prettierrc.json"],
+      "url": "http://json.schemastore.org/prettierrc"
+    }
+  ],
   "[shellscript]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
