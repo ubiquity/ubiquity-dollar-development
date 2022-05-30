@@ -1,5 +1,12 @@
 import { abi as tokenABI } from "../../../artifacts/contracts/UbiquityGovernance.sol/UbiquityGovernance.json";
-import { addressBook, Impersonate, account, Balance } from "./impersonate-types";
+import { addressBook } from "../investor-emissions";
+import { Impersonate, Account, Balance } from "./impersonate-types";
+
+const account = {
+  token: new Account(),
+  sender: new Account(),
+  receiver: new Account(),
+} as { [key in keyof typeof addressBook]: Account };
 
 export async function impersonate(taskArgs: typeof addressBook, { ethers, network }: Impersonate) {
   console.log(`impersonating ${taskArgs.sender}`);
