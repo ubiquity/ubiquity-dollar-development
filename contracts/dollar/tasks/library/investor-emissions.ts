@@ -18,9 +18,11 @@ export const addressBook = {
 
 module.exports = {
   description: "Distributes investor emissions",
-  params: addressBook,
-  // optionalParams: {
-  //   token: "0x4e38D89362f7e5db0096CE44ebD021c3962aA9a0", // Ubiquity Governance
-  // },
+  // params: {addressBook},
+  optionalParams: {
+    token: ["Ubiquity governance token address", addressBook.token],
+    sender: ["Account thats distributing the tokens", addressBook.sender],
+    receiver: ["Account thats receiving the tokens", addressBook.receiver],
+  },
   action: (): ActionType<any> => action,
 };

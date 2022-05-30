@@ -2,15 +2,17 @@ import { task } from "hardhat/config";
 import { ActionType, CLIArgumentType } from "hardhat/types";
 import path from "path";
 import { libraryDirectory } from "../index";
+import { colorizeText } from "./console-colors";
 
 interface Params {
   [key: string]: string;
 }
+type ParamWithDefault = [string | undefined, unknown, CLIArgumentType<string> | undefined];
 interface OptionalParams {
-  [key: string]: string[];
+  [key: string]: ParamWithDefault[];
 }
 interface PositionalParams {
-  [key: string]: [string, string, CLIArgumentType<string>][];
+  [key: string]: ParamWithDefault[];
 }
 interface TaskModule {
   action: () => ActionType<any>;
@@ -20,20 +22,14 @@ interface TaskModule {
   positionalParams?: PositionalParams;
 }
 
-import colors from "./console-colors";
-
 export function taskMounter(filename: string) {
   const pathToFile = path.join(libraryDirectory, filename);
   let taskName = filename.split("/").pop()?.split(".").shift() as string; // dynamically name task based on filename
 
-  // taskName = "_".concat(taskName); // prefix with _
-
-  // taskName = colors.bright.concat(taskName).concat(colors.reset); // highlight custom tasks
-
   import(pathToFile).then(extendHardhatCli);
 
   function extendHardhatCli({ action, description, params, optionalParams, positionalParams }: TaskModule): void {
-    description ? (description = colors.bright.concat(description).concat(colors.reset)) : false; // highlight custom task descriptions
+    description ? (description = colorizeText(description, "bright")) : false; // highlight custom task descriptions
     const extension = task(taskName, description);
 
     if (!action) {
@@ -48,7 +44,7 @@ export function taskMounter(filename: string) {
     if (!description) {
       // import the description
       // optional
-      console.warn(`\t${taskName} has no description`);
+      console.warn(`\t${colorizeText(taskName, "bright")} has no description`);
       description = "No description found";
     }
 
@@ -56,18 +52,32 @@ export function taskMounter(filename: string) {
       // import the required params
       // optional; if there are none this can still run
       Object.entries(params).forEach(([key, value]) => extension.addParam(key, value));
+    } else {
+      // console.warn(`\t${colorizeText(taskName, "bright")} has no params`);
     }
 
     if (optionalParams) {
       // import the optional params
       // optional
-      Object.entries(optionalParams).forEach((params) => extension.addOptionalParam.bind(params));
+      Object.entries(optionalParams).forEach((optionalParam) => {
+        const flattened = optionalParam.flat();
+        // @ts-expect-error
+        extension.addOptionalParam(...flattened);
+      });
+    } else {
+      // console.warn(`\t${colorizeText(taskName, "bright")} has no optionalParams`);
     }
 
     if (positionalParams) {
       // import the positional params
       // optional
-      Object.entries(positionalParams).forEach((params) => extension.addPositionalParam.bind(params));
+      Object.entries(positionalParams).forEach((positionalParam) => {
+        const flattened = positionalParam.flat();
+        // @ts-expect-error
+        extension.addPositionalParam(...flattened);
+      });
+    } else {
+      // console.warn(`\t${colorizeText(taskName, "bright")} has no positionalParams`);
     }
 
     extension.setAction(action());
