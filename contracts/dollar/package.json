@@ -23,7 +23,9 @@
     "lint:prettier": "prettier --write .",
     "node:start": "hardhat node --no-deploy --show-accounts",
     "node:faucet": "hardhat faucet --network localhost",
-    "node:deployYieldProxy": "hardhat deployYieldProxyLocally --network localhost"
+    "node:deployYieldProxy": "hardhat deployYieldProxyLocally --network localhost",
+    "_watch:prettier": "yarn nodemon -V --watch tasks/ --exec \"yarn prettier ./tasks/ --write\" -e .ts",
+    "_watch:hh": "yarn nodemon -V --watch tasks/ --exec \"yarn hardhat\" -e .ts"
   },
   "keywords": [
     "stablecoin",
