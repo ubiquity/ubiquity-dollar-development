@@ -13,16 +13,19 @@ if (process.env.UBQ_DISTRIBUTOR) {
 export const addressBook = {
   token: "0x4e38D89362f7e5db0096CE44ebD021c3962aA9a0", // Ubiquity Governance
   sender: distributor, // Distributor
-  receiver: "0x4007CE2083c7F3E18097aeB3A39bb8eC149a341d", // Investor
+  receiver: "0xefC0e701A824943b469a694aC564Aa1efF7Ab7dd", // Investor
 };
 
+// export default
 module.exports = {
   description: "Distributes investor emissions",
-  // params: {addressBook},
+  params: {
+    receiver: "Account thats receiving the tokens",
+  },
   optionalParams: {
     token: ["Ubiquity governance token address", addressBook.token],
     sender: ["Account thats distributing the tokens", addressBook.sender],
-    receiver: ["Account thats receiving the tokens", addressBook.receiver],
+    // receiver: ["Account thats receiving the tokens", addressBook.receiver],
   },
   action: (): ActionType<any> => action,
 };

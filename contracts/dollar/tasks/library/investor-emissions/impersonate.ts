@@ -1,6 +1,7 @@
 import { abi as tokenABI } from "../../../artifacts/contracts/UbiquityGovernance.sol/UbiquityGovernance.json";
+import { UbiquityGovernance } from "../../../artifacts/types/UbiquityGovernance";
 import { addressBook } from "../investor-emissions";
-import { Impersonate, Account, Balance } from "./impersonate-types";
+import { Account, Balance, Impersonate } from "./impersonate-types";
 
 const account = {
   token: new Account(),
@@ -8,7 +9,7 @@ const account = {
   receiver: new Account(),
 } as { [key in keyof typeof addressBook]: Account };
 
-export async function impersonate(taskArgs: typeof addressBook, { ethers, network }: Impersonate) {
+export async function impersonate(taskArgs: { [key in keyof typeof addressBook]: string }, { ethers, network }: Impersonate) {
   console.log(`impersonating ${taskArgs.sender}`);
   await network.provider.request({ method: "hardhat_impersonateAccount", params: [taskArgs.sender] }); // impersonate
 
@@ -16,18 +17,18 @@ export async function impersonate(taskArgs: typeof addressBook, { ethers, networ
   account.sender.signer = await ethers.getSigner(taskArgs.sender);
   account.receiver.signer = await ethers.getSigner(taskArgs.receiver);
   account.token.contract = new ethers.Contract(taskArgs.token, tokenABI, account.sender.signer);
+  const tokenContractAsSender = account.token.contract.connect(account.sender.signer) as UbiquityGovernance;
 
   await printAllBalances();
-
-  // perform the transfer
-  const transferAmount = await getBalanceOf(taskArgs.sender);
-  console.log(shortenAddress(taskArgs.sender), transferAmount.decimal, `UBQ`, `=>`, shortenAddress(taskArgs.receiver));
-  await account.token.contract.connect(account.sender.signer).transfer(taskArgs.receiver, transferAmount.bigNumber);
-
+  console.log(await getBalanceOf(taskArgs.sender));
+  await doTheTransfer();
   await printAllBalances();
 
   async function getBalanceOf(address: string): Promise<Balance> {
     const bigNumber = await account.token.contract?.balanceOf(address);
+    if (!bigNumber) {
+      throw new Error(`balanceOf(${address}) returned null`);
+    }
     return {
       bigNumber,
       decimal: bigNumber / 1e18,
@@ -41,6 +42,11 @@ export async function impersonate(taskArgs: typeof addressBook, { ethers, networ
     };
 
     console.table(balances);
+  }
+  async function doTheTransfer() {
+    const transferAmount = await getBalanceOf(taskArgs.sender);
+    console.log(shortenAddress(taskArgs.sender), transferAmount.decimal, await tokenContractAsSender.symbol(), `=>`, shortenAddress(taskArgs.receiver));
+    await tokenContractAsSender.transfer(taskArgs.receiver, transferAmount.bigNumber);
   }
 }
 
