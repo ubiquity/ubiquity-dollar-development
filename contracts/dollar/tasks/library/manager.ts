@@ -1,3 +1,4 @@
+import { Network } from "@ethersproject/networks/lib/types";
 import "@nomiclabs/hardhat-waffle";
 import { ActionType } from "hardhat/types/runtime";
 import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
@@ -7,7 +8,7 @@ module.exports = {
   action:
     (): ActionType<any> =>
     async (_taskArgs, { ethers }) => {
-      const network = await ethers.provider.getNetwork();
+      const network = (await ethers.provider.getNetwork()) as Network;
       const managerAdr = "0x4DA97a8b831C345dBe6d16FF7432DF2b7b776d98";
       const debtCouponMgrAdr = "0x432120Ad63779897A424f7905BA000dF38A74554";
       if (network.name === "hardhat") {

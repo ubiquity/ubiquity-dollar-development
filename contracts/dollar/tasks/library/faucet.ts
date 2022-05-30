@@ -74,7 +74,6 @@ module.exports = {
       //   namedCurve3CrvAddress,
       //   treasuryAccount
       // )) as ERC20;
-
       const ubqToken = (await ethers.getContractAt("ERC20", await manager.governanceTokenAddress(), treasuryAccount)) as ERC20;
 
       const bondingShareToken = (await ethers.getContractAt(
