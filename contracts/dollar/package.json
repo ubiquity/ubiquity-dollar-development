@@ -1,16 +1,16 @@
 {
-  "name": "uad-contracts",
+  "name": "@ubiquity/ubiquity-dollar-development",
   "version": "1.0.0",
-  "description": "Ubiquity Algorithmic Dollar smart contracts",
+  "description": "Ubiquity Dollar",
   "author": "Ubiquity DAO",
   "license": "Apache-2.0",
   "homepage": "https://dao.ubq.fi/dollar",
   "bugs": {
-    "url": "https://github.com/ubiquity/uad-contracts/issues"
+    "url": "https://github.com/ubiquity/ubiquity-dollar-development/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ubiquity/uad-contracts.git"
+    "url": "https://github.com/ubiquity/ubiquity-dollar-development.git"
   },
   "scripts": {
     "clean": "hardhat clean",
