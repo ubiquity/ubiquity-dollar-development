@@ -3,6 +3,8 @@ import { HardhatEthersHelpers } from "@nomiclabs/hardhat-ethers/types";
 import { Contract } from "ethers";
 import { Network } from "hardhat/types";
 
+import e from "ethers/lib/ethers";
+
 export interface Balance {
   bigNumber: number;
   decimal: number;
@@ -15,6 +17,6 @@ export class Account {
 }
 
 export interface Impersonate {
-  ethers: typeof import("/Users/nv/repos/ubiquity/ubiquity-dollar-development/contracts/dollar/node_modules/ethers/lib/ethers") & HardhatEthersHelpers;
+  ethers: typeof e & HardhatEthersHelpers;
   network: Network;
 }

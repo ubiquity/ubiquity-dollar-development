@@ -12,11 +12,10 @@ if (process.env.UBQ_DISTRIBUTOR) {
 
 export const addressBook = {
   token: "0x4e38D89362f7e5db0096CE44ebD021c3962aA9a0", // Ubiquity Governance
-  sender: distributor, // Distributor
+  sender: distributor,
   receiver: "0xefC0e701A824943b469a694aC564Aa1efF7Ab7dd", // Investor
 };
 
-// export default
 module.exports = {
   description: "Distributes investor emissions",
   params: {

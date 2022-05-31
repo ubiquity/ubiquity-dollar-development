@@ -9,19 +9,25 @@ import "hardhat-gas-reporter";
 import { HardhatUserConfig } from "hardhat/types";
 import path from "path";
 import "solidity-coverage";
+import { colorizeText } from './tasks/utils/console-colors';
 
 if (fs.existsSync(path.join(__dirname, "artifacts/types"))) {
   import("./tasks/index");
 } else {
-  console.warn("Tasks loading skipped until compilation artifacts are available");
+  warn("Tasks loading skipped until compilation artifacts are available");
 }
 
 dotenv.config();
-const { MNEMONIC, UBQ, API_KEY_ALCHEMY, API_KEY_ETHERSCAN, REPORT_GAS, API_KEY_COINMARKETCAP } = process.env;
+dotenv.config({ path: "../../.env" });
 
-const accounts = {
-  mnemonic: `${MNEMONIC || "test test test test test test test test test test test junk"}`, // use default accounts
-};
+const { MNEMONIC, REPORT_GAS } = process.env;
+const accounts = { mnemonic: "test test test test test test test test test test test junk", }; // use default accounts
+
+if (!MNEMONIC) {
+  warn("MNEMONIC environment variable unset");
+} else {
+  accounts.mnemonic = MNEMONIC;
+}
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -68,7 +74,7 @@ const config: HardhatUserConfig = {
     MasterChefAddress: "0x8fFCf9899738e4633A721904609ffCa0a2C44f3D",
     MetaPoolAddress: "0x20955cb69ae1515962177d164dfc9522feef567e",
     BondingAddress: "0x831e3674Abc73d7A3e9d8a9400AF2301c32cEF0C",
-    BondingV2Address: "0xdAC17F958D2ee523a2206206994597C13D831ec7", // FAKE ADDRESS, TO BE REPLACED AFTER V2 DEPLOYMENT
+    BondingV2Address: "0xC251eCD9f1bD5230823F9A0F99a44A87Ddd4CA38",
     UbiquityAlgorithmicDollarManagerAddress: "0x4DA97a8b831C345dBe6d16FF7432DF2b7b776d98",
     jarUSDCAddr: "0xEB801AB73E9A2A482aA48CaCA13B1954028F4c94",
     jarYCRVLUSDaddr: "0x4fFe73Cf2EEf5E8C8E0E10160bCe440a029166D2",
@@ -107,16 +113,16 @@ const config: HardhatUserConfig = {
     },
     mainnet: {
       url: getAlchemyRpc("mainnet"),
-      accounts: UBQ ? [UBQ] : accounts,
-      gasPrice: 60000000000,
+      accounts: process.env.UBQ_ADMIN ? [process.env.UBQ_ADMIN] : accounts,
+      gasPrice: 20000000000,
     },
     ropsten: {
-      gasPrice: 60000000000,
+      gasPrice: 20000000000,
       url: getAlchemyRpc("ropsten"),
       accounts,
     },
     rinkeby: {
-      gasPrice: 60000000000,
+      gasPrice: 20000000000,
       url: getAlchemyRpc("rinkeby"),
       accounts,
     },
@@ -130,30 +136,42 @@ const config: HardhatUserConfig = {
     currency: "USD",
     gasPrice: 60,
     onlyCalledMethods: true,
-    coinmarketcap: `${API_KEY_COINMARKETCAP || ""}`,
+    coinmarketcap: getKey("COINMARKETCAP"),
   },
   etherscan: {
     // Your API key for Etherscan
     // Obtain one at https://etherscan.io/
-    apiKey: `${API_KEY_ETHERSCAN || ""}`,
+    apiKey: getKey("ETHERSCAN"),
   },
 };
 
 export default config;
 
-function getAlchemyRpc(network: string, lastChance?: boolean): string {
+function getAlchemyRpc(network: "mainnet" | "ropsten" | "rinkeby"): string {
   // This will try and resolve alchemy key related issues
   // first it will read the key value
-  // if no value found, then it will attempt to symlink the .env from above to the .env in the current folder
+  // if no value found, then it will attempt to load the .env from above to the .env in the current folder
   // if that fails, then it will throw an error and allow the developer to rectify the issue
-  if (API_KEY_ALCHEMY?.length) {
+  if (process.env.API_KEY_ALCHEMY?.length) {
     return `https://eth-${network}.alchemyapi.io/v2/${process.env.API_KEY_ALCHEMY}`;
   }
-  if (lastChance) {
+  else {
     throw new Error("Please set the API_KEY_ALCHEMY environment variable to your Alchemy API key");
-  } else {
-    // didn't find API_KEY_ALCHEMY, try symlinking from .env above
-    fs.symlinkSync("../../.env", "./");
-    return getAlchemyRpc(network, true);
   }
+}
+
+function getKey(keyName: "ETHERSCAN" | "COINMARKETCAP") {
+
+  const PREFIX = "API_KEY_";
+  const ENV_KEY = PREFIX.concat(keyName);
+  if (process.env[ENV_KEY]) {
+    return process.env[ENV_KEY] as string
+  }
+  else {
+    warn(`Please set the ${ENV_KEY} environment variable to your ${keyName} API key`)
+  }
+}
+
+function warn(message: string) {
+  console.warn(colorizeText(`\t⚠ ${message}`, "fgYellow"))
 }

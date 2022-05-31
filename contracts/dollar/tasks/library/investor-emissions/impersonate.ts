@@ -20,7 +20,6 @@ export async function impersonate(taskArgs: { [key in keyof typeof addressBook]:
   const tokenContractAsSender = account.token.contract.connect(account.sender.signer) as UbiquityGovernance;
 
   await printAllBalances();
-  console.log(await getBalanceOf(taskArgs.sender));
   await doTheTransfer();
   await printAllBalances();
 
