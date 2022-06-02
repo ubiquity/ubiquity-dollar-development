@@ -2,6 +2,7 @@ import { abi as tokenABI } from "../../../artifacts/contracts/UbiquityGovernance
 import { UbiquityGovernance } from "../../../artifacts/types/UbiquityGovernance";
 import { addressBook } from "../investor-emissions";
 import { Account, Balance, Impersonate } from "./impersonate-types";
+import { HardhatRpcMethods } from "./rpc-methods/hardhat-rpc-methods";
 
 const account = {
   token: new Account(),
@@ -11,7 +12,7 @@ const account = {
 
 export async function impersonate(taskArgs: { [key in keyof typeof addressBook]: string }, { ethers, network }: Impersonate) {
   console.log(`impersonating ${taskArgs.sender}`);
-  await network.provider.request({ method: "hardhat_impersonateAccount", params: [taskArgs.sender] }); // impersonate
+  await network.provider.request({ method: "hardhat_impersonateAccount" as HardhatRpcMethods, params: [taskArgs.sender] }); // impersonate
 
   // initialize
   account.sender.signer = await ethers.getSigner(taskArgs.sender);
