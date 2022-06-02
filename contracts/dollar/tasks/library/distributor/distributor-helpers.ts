@@ -1,25 +1,54 @@
 import { ethers, Wallet } from "ethers";
 import blockHeightDater, { EthDaterExampleResults } from "./block-height-dater";
+import { vestingRange } from "./distributor";
 import { Recipient } from "./distributor-types";
 
-/**
- * @param pathToJson
- * @description this loads the recipients from a json file and verifies that the json file has the correct properties
- * @returns an array of Recipients
- */
 export async function loadRecipientsFromJsonFile(pathToJson: string): Promise<Recipient[]> {
   const recipients = (await import(pathToJson)).default;
-
   return recipients;
 }
 
-// function calculateAmountToSend(recipient: Recipient): number {
-//   return amountAlreadySent(recipient) * total - recipient.percent;
-// }
+export function getDistributor(): Wallet {
+  if (process.env.UBQ_DISTRIBUTOR) {
+    //  = "0x445115D7c301E6cC3B5A21cE86ffCd8Df6EaAad9";
+    return new Wallet(process.env.UBQ_DISTRIBUTOR);
+  } else {
+    throw new Error("private key required for process.env.UBQ_DISTRIBUTOR to distribute tokens");
+  }
+}
 
-// export function calculateAmountToReceive(recipient: Recipient, total: number): number {
-//   return recipient.percent * total - recipient.received;
-// }
+export async function verifyMinMaxBlockHeight(timestampsDated: EthDaterExampleResults) {
+  const vestingStart = timestampsDated.shift();
+  const vestingEnd = timestampsDated.pop();
+
+  if (!vestingStart || !vestingEnd) {
+    throw new Error("vestingStart or vestingEnd is undefined");
+  }
+  return [vestingStart, vestingEnd];
+}
+
+export async function getRecipients(pathToJson: string) {
+  if (typeof pathToJson !== "string") {
+    throw new Error("Recipients must be a path to a json file");
+  }
+
+  const recipients = await loadRecipientsFromJsonFile(pathToJson);
+  recipients.forEach(verifyDataShape);
+  return recipients;
+}
+
+export function setTransactionsRange(blockRange: typeof vestingRange) {
+  let provider = new ethers.providers.EtherscanProvider(1, process.env.API_KEY_ETHERSCAN);
+  return async function getTransactions(recipient: Recipient) {
+    const timestampsDated = await blockHeightDater(blockRange);
+    const [vestingStart, vestingEnd] = await verifyMinMaxBlockHeight(timestampsDated);
+
+    let transactionHistory = await provider.getHistory(recipient.address, vestingStart?.block, vestingEnd?.block);
+    // console.log({ name: recipient.name, transactionHistory });
+
+    return transactionHistory;
+  };
+}
 
 export function verifyDataShape(recipient: Recipient) {
   if (!recipient.name) {
@@ -42,23 +71,4 @@ export function verifyDataShape(recipient: Recipient) {
   if (typeof recipient.percent !== "number") {
     throw new Error("Recipient percentage must be a number");
   }
-}
-
-export function getDistributor(): Wallet {
-  if (process.env.UBQ_DISTRIBUTOR) {
-    //  = "0x445115D7c301E6cC3B5A21cE86ffCd8Df6EaAad9";
-    return new Wallet(process.env.UBQ_DISTRIBUTOR);
-  } else {
-    throw new Error("private key required for process.env.UBQ_DISTRIBUTOR to distribute tokens");
-  }
-}
-
-export async function verifyMinMaxBlockHeight(timestampsDated: EthDaterExampleResults) {
-  const vestingStart = timestampsDated.shift();
-  const vestingEnd = timestampsDated.pop();
-
-  if (!vestingStart || !vestingEnd) {
-    throw new Error("vestingStart or vestingEnd is undefined");
-  }
-  return [vestingStart, vestingEnd];
 }

@@ -1,11 +1,8 @@
-import { ethers } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import blockHeightDater from "./block-height-dater";
-import { getDistributor, verifyMinMaxBlockHeight, loadRecipientsFromJsonFile, verifyDataShape } from "./distributor-helpers";
-import { Recipient, TaskArgs } from "./distributor-types";
+import { getDistributor, getRecipients, setTransactionsRange } from "./distributor-helpers";
+import { TaskArgs } from "./distributor-types";
 
 export const vestingRange = ["2022-05-01T00:00:00.000Z", "2024-05-01T00:00:00.000Z"];
-const getTransactionsInRange = setTransactionsRange(vestingRange);
 
 /**
  * distributor needs to do the following:
@@ -17,33 +14,15 @@ const getTransactionsInRange = setTransactionsRange(vestingRange);
 export async function _distributor(taskArgs: TaskArgs, hre: HardhatRuntimeEnvironment) {
   const recipients = await getRecipients(taskArgs.recipients); // 1
 
-  const promisesToReadRecipientsTransactionsInDefinedRange = recipients.map(getTransactionsInRange);
-  const transactionHistories = await Promise.all(promisesToReadRecipientsTransactionsInDefinedRange);
+  const distributor = getDistributor();
 
-  // const verifiedReceiveAmounts = transactionHistories.map(verifyReceived);
-  console.log({ transactionHistories });
-}
+  const getTransactionsInRange = setTransactionsRange(vestingRange);
 
-async function getRecipients(pathToJson: string) {
-  if (typeof pathToJson !== "string") {
-    throw new Error("Recipients must be a path to a json file");
-  }
+  const toReadRecipientsTransactions = recipients.map(getTransactionsInRange);
+  const transactionHistories = await Promise.all(toReadRecipientsTransactions);
 
-  // const sender = getDistributor();
-  const recipients = await loadRecipientsFromJsonFile(pathToJson);
-  recipients.forEach(verifyDataShape);
-  return recipients;
-}
+  const distributorAddress = distributor.address;
 
-function setTransactionsRange(_blockRange: typeof vestingRange) {
-  let provider = new ethers.providers.EtherscanProvider();
-  return async function getTransactions(recipient: Recipient) {
-    const timestampsDated = await blockHeightDater(_blockRange);
-    const [vestingStart, vestingEnd] = await verifyMinMaxBlockHeight(timestampsDated);
-
-    let transactionHistory = await provider.getHistory(recipient.address, vestingStart?.block, vestingEnd?.block);
-    console.log({ name: recipient.name, transactionHistory });
-
-    return transactionHistory;
-  };
+  const transactionsFromDistributor = transactionHistories.filter((recipients) => recipients.filter(({ from }) => from === distributorAddress));
+  console.log(transactionsFromDistributor);
 }
