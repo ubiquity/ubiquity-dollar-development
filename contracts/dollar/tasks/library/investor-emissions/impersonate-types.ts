@@ -16,7 +16,7 @@ export class Account {
   signer: SignerWithAddress | null = null;
 }
 
-export interface Impersonate {
+export interface EthersAndNetwork {
   ethers: typeof e & HardhatEthersHelpers;
   network: Network;
 }

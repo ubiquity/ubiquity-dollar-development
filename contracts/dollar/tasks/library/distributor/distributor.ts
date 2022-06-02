@@ -1,83 +1,49 @@
-import { ethers, Wallet } from "ethers";
-import { Impersonate } from "../investor-emissions/impersonate-types";
+import { ethers } from "ethers";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 import blockHeightDater from "./block-height-dater";
-import { getRecipients } from "./distributor-helpers";
+import { getDistributor, verifyMinMaxBlockHeight, loadRecipientsFromJsonFile, verifyDataShape } from "./distributor-helpers";
 import { Recipient, TaskArgs } from "./distributor-types";
 
-function getDistributor() {
-  if (process.env.UBQ_DISTRIBUTOR) {
-    //  = "0x445115D7c301E6cC3B5A21cE86ffCd8Df6EaAad9";
-    return new Wallet(process.env.UBQ_DISTRIBUTOR);
-  } else {
-    throw new Error("private key required for process.env.UBQ_DISTRIBUTOR to distribute tokens");
-  }
+export const vestingRange = ["2022-05-01T00:00:00.000Z", "2024-05-01T00:00:00.000Z"];
+const getTransactionsInRange = setTransactionsRange(vestingRange);
+
+/**
+ * distributor needs to do the following:
+ * * 1. load the recipients from a json file
+ * * 2. verify the amount sent to each recipient within the vesting range
+ * * 3. distribute according to the vesting schedule to each recipient, and subtract the amount already sent
+ * * 4. transfer the tokens to each recipient
+ */
+export async function _distributor(taskArgs: TaskArgs, hre: HardhatRuntimeEnvironment) {
+  const recipients = await getRecipients(taskArgs.recipients); // 1
+
+  const promisesToReadRecipientsTransactionsInDefinedRange = recipients.map(getTransactionsInRange);
+  const transactionHistories = await Promise.all(promisesToReadRecipientsTransactionsInDefinedRange);
+
+  // const verifiedReceiveAmounts = transactionHistories.map(verifyReceived);
+  console.log({ transactionHistories });
 }
 
-const vestingRange = {
-  vestingStart: "2022-05-01T00:00:00.000Z",
-  vestingEnd: "2024-05-01T00:00:00.000Z",
-};
-
-export async function _distributor(taskArgs: TaskArgs, { ethers, network }: Impersonate) {
-  const sender = getDistributor();
-
-  if (typeof taskArgs.recipients !== "string") {
+async function getRecipients(pathToJson: string) {
+  if (typeof pathToJson !== "string") {
     throw new Error("Recipients must be a path to a json file");
   }
 
-  const recipients = await getRecipients(taskArgs.recipients);
-
-  recipients.forEach(verifyReceived);
-  //
-  // await verifyReceived(recipients);
-  const verifiedReceiveAmounts = recipients.map(verifyReceived);
-  // console.log({ verifiedReceiveAmounts });
-
-  // const functionThatReturnsAPromise = item => { //a function that returns a promise
-  //   return Promise.resolve('ok')
-  // }
-
-  // const doSomethingAsync = async item => {
-  //   return functionThatReturnsAPromise(item)
-  // }
-
-  // const getData = async () => {
-  //   return Promise.all(recipients.map(item => doSomethingAsync(item)))
-  // }
-
-  // getData().then(data => {
-  //   console.log(data)
-  // })
-
-  // return verifiedReceiveAmounts;
+  // const sender = getDistributor();
+  const recipients = await loadRecipientsFromJsonFile(pathToJson);
+  recipients.forEach(verifyDataShape);
+  return recipients;
 }
 
-let provider = new ethers.providers.EtherscanProvider();
-// TODO: verify the already sent amount reading the chain
-export async function verifyReceived(recipient: Recipient) {
-  // : Promise<VerifiedRecipient>
+function setTransactionsRange(_blockRange: typeof vestingRange) {
+  let provider = new ethers.providers.EtherscanProvider();
+  return async function getTransactions(recipient: Recipient) {
+    const timestampsDated = await blockHeightDater(_blockRange);
+    const [vestingStart, vestingEnd] = await verifyMinMaxBlockHeight(timestampsDated);
 
-  const { vestingStart, vestingEnd } = await getMinMaxBlockHeight();
+    let transactionHistory = await provider.getHistory(recipient.address, vestingStart?.block, vestingEnd?.block);
+    console.log({ name: recipient.name, transactionHistory });
 
-  // console.log({ timeStamps: blockHeights });
-
-  let history = await provider.getHistory(recipient.address, vestingStart?.block, vestingEnd?.block);
-  console.log({ name: recipient.name, history });
-  return history;
-  // history[0].from
-  // const verifiedRecipient = recipient as VerifiedRecipient;
-  // verifiedRecipient.received = -1; // TODO: read the chain
-  // return await verifiedRecipient;
-}
-
-async function getMinMaxBlockHeight() {
-  const timestampsDated = await blockHeightDater(vestingRange);
-
-  const vestingStart = timestampsDated.shift();
-  const vestingEnd = timestampsDated.pop();
-
-  if (!vestingStart || !vestingEnd) {
-    throw new Error("vestingStart or vestingEnd is undefined");
-  }
-  return { vestingStart, vestingEnd };
+    return transactionHistory;
+  };
 }

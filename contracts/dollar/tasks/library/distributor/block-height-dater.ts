@@ -1,8 +1,9 @@
 import EthDater from "ethereum-block-by-date";
 import { ethers } from "ethers";
+import { vestingRange } from "./distributor";
 const provider = new ethers.providers.CloudflareProvider();
 
-export default async function blockHeightDater(importantDates: { vestingStart: string; vestingEnd: string }) {
+export default async function blockHeightDater(range: typeof vestingRange) {
   const dater = new EthDater(
     provider // Ethers provider, required.
   );
@@ -10,18 +11,18 @@ export default async function blockHeightDater(importantDates: { vestingStart: s
   // Getting block by period duration. For example: every first block of month's midnights between vesting start and vesting end
   let blocks = dater.getEvery(
     "months", // Period, required. Valid value: years, quarters, months, weeks, days, hours, minutes
-    importantDates.vestingStart, // Start date, required. Any valid moment.js value: string, milliseconds, Date() object, moment() object.
-    importantDates.vestingEnd, // End date, required. Any valid moment.js value: string, milliseconds, Date() object, moment() object.
+    range[0], // Start date, required. Any valid moment.js value: string, milliseconds, Date() object, moment() object.
+    range[range.length - 1], // End date, required. Any valid moment.js value: string, milliseconds, Date() object, moment() object.
     1, // Duration, optional, integer. By default 1.
     true, // Block after, optional. Search for the nearest block before or after the given date. By default true.
     false // Refresh boundaries, optional. Recheck the latest block before request. By default false.
-  ) as ExampleResults;
+  ) as EthDaterExampleResults;
 
   return blocks;
 }
 
 // type DatedBlock = { date: "2019-09-02T12:00:00Z"; block: 8470641; timestamp: 1567425601 };
-type ExampleResults = [
+export type EthDaterExampleResults = [
   {
     date: "2022-05-01T00:00:00Z";
     block: 14688630;
