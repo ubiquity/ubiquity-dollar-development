@@ -1,6 +1,6 @@
 import EthDater from "ethereum-block-by-date";
 import { ethers } from "ethers";
-import { vestingRange } from "./distributor";
+import { vestingRange } from "./";
 const provider = new ethers.providers.CloudflareProvider();
 
 export default async function blockHeightDater(range: typeof vestingRange) {
@@ -21,7 +21,12 @@ export default async function blockHeightDater(range: typeof vestingRange) {
   return blocks;
 }
 
-// type DatedBlock = { date: "2019-09-02T12:00:00Z"; block: 8470641; timestamp: 1567425601 };
+export interface EthDaterExampleResult {
+  date: string;
+  block: number;
+  timestamp: number;
+}
+
 export type EthDaterExampleResults = [
   {
     date: "2022-05-01T00:00:00Z";

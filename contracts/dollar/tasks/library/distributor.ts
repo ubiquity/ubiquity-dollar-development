@@ -2,7 +2,7 @@ import "@nomiclabs/hardhat-waffle";
 import "hardhat-deploy";
 import { types } from "hardhat/config";
 import { ActionType } from "hardhat/types/runtime";
-import { _distributor as action } from "./distributor/distributor";
+import { _distributor as action } from "./distributor/";
 
 // yarn hardhat distributor --recipients ./address-book.json
 

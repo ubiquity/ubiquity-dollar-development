@@ -1,6 +1,6 @@
 import { ethers, Wallet } from "ethers";
-import blockHeightDater, { EthDaterExampleResults } from "./block-height-dater";
-import { vestingRange } from "./distributor";
+import blockHeightDater, { EthDaterExampleResult, EthDaterExampleResults } from "./block-height-dater";
+import { vestingRange } from "./";
 import { Recipient } from "./distributor-types";
 
 export async function loadRecipientsFromJsonFile(pathToJson: string): Promise<Recipient[]> {
@@ -24,7 +24,7 @@ export async function verifyMinMaxBlockHeight(timestampsDated: EthDaterExampleRe
   if (!vestingStart || !vestingEnd) {
     throw new Error("vestingStart or vestingEnd is undefined");
   }
-  return [vestingStart, vestingEnd];
+  return [vestingStart, vestingEnd] as EthDaterExampleResult[];
 }
 
 export async function getRecipients(pathToJson: string) {
@@ -37,16 +37,14 @@ export async function getRecipients(pathToJson: string) {
   return recipients;
 }
 
-export function setTransactionsRange(blockRange: typeof vestingRange) {
+export async function setTransactionsRange(blockRange: typeof vestingRange) {
   let provider = new ethers.providers.EtherscanProvider(1, process.env.API_KEY_ETHERSCAN);
-  return async function getTransactions(recipient: Recipient) {
-    const timestampsDated = await blockHeightDater(blockRange);
-    const [vestingStart, vestingEnd] = await verifyMinMaxBlockHeight(timestampsDated);
+  const timestampsDated = await blockHeightDater(blockRange);
+  const [vestingStart, vestingEnd] = await verifyMinMaxBlockHeight(timestampsDated);
 
+  return async function getTransactionsOfRecipient(recipient: Recipient) {
     let transactionHistory = await provider.getHistory(recipient.address, vestingStart?.block, vestingEnd?.block);
-    // console.log({ name: recipient.name, transactionHistory });
-
-    return transactionHistory;
+    return { recipient, transactionHistory };
   };
 }
 

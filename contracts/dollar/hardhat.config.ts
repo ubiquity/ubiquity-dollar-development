@@ -147,7 +147,7 @@ function getAlchemyRpc(network: "mainnet" | "ropsten" | "rinkeby"): string {
   }
 }
 
-function getKey(keyName: "ETHERSCAN" | "COINMARKETCAP") {
+export function getKey(keyName: "ETHERSCAN" | "COINMARKETCAP") {
   const PREFIX = "API_KEY_";
   const ENV_KEY = PREFIX.concat(keyName);
   if (process.env[ENV_KEY]) {
@@ -158,6 +158,6 @@ function getKey(keyName: "ETHERSCAN" | "COINMARKETCAP") {
   }
 }
 
-function warn(message: string) {
+export function warn(message: string) {
   console.warn(colorizeText(`\t⚠ ${message}`, "fgYellow"))
 }
