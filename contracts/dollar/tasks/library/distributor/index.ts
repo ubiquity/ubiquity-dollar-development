@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { getRecipients } from "./distributor-helpers";
-import { Recipient, TaskArgs } from "./distributor-types";
+import { TaskArgs } from "./distributor-types";
 import { readContractTransactionHistory } from "./read-contract-transaction-history";
 
 export const vestingRange = ["2022-05-01T00:00:00.000Z", "2024-05-01T00:00:00.000Z"];
@@ -48,21 +48,6 @@ export async function _distributor(taskArgs: TaskArgs, hre: HardhatRuntimeEnviro
       }
     })
     .filter(Boolean);
-
-  // eventsAndLogs[33].events.args[2].hex = '0x02335b0d2273bfdaa0'
-  // parseInt('0x02335b0d2273bfdaa0') / 1e18 = 40.5940541078561
-
-  // const filteredRecipients = [] as TransactionResponse[][];
-
-  // transactionHistories.forEach((recipient: TransactionResponse[]) => {
-  //   const filtered = recipient.filter(fn);
-
-  //   function fn(transaction: TransactionResponse) {
-  //     return transaction.from === distributor.address;
-  //   }
-
-  //   filteredRecipients.push(filtered);
-  // });
 
   writeToDisk(logout);
 }
