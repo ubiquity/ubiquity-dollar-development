@@ -27,22 +27,27 @@ export async function _distributor(taskArgs: TaskArgs, hre: HardhatRuntimeEnviro
     else if (events.name === "Transfer") return true;
   });
 
-  const logout = transfersOnly.map(({ events, log }) => {
-    const to = events.args[1] as string;
-    const _amount = events.args[2]._hex as string;
-    // console.log(events.args);
-    const amount = parseInt(_amount) / 1e18;
+  const logout = transfersOnly
+    .map(({ events, log }) => {
+      const to = events.args[1] as string;
+      const _amount = events.args[2]._hex as string;
+      const amount = parseInt(_amount) / 1e18;
 
-    let x = recipients.length;
-    while (--x) if (recipients[x].address === to) break;
-
-    return {
-      name: recipients[x].name,
-      hash: log.transactionHash,
-      args: events.args,
-      amount,
-    };
-  });
+      // very fast way to see if the recipient is in the address book
+      let x = recipients.length;
+      while (x--) {
+        if (recipients[x].address === to) {
+          return {
+            name: recipients[x].name,
+            hash: log.transactionHash,
+            from: events.args[0],
+            to: events.args[1],
+            amount,
+          };
+        }
+      }
+    })
+    .filter(Boolean);
 
   // eventsAndLogs[33].events.args[2].hex = '0x02335b0d2273bfdaa0'
   // parseInt('0x02335b0d2273bfdaa0') / 1e18 = 40.5940541078561
