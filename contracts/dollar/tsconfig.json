@@ -8,6 +8,6 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true
   },
-  "include": ["./scripts", "./test", "./deploy", "./utils"],
+  "include": ["./scripts", "./test", "./deploy", "tasks/library/utils", "tasks/library/distributor/utils/etherscan.ts"],
   "files": ["./hardhat.config.ts"]
 }

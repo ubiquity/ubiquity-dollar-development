@@ -2,17 +2,17 @@ import "@nomiclabs/hardhat-waffle";
 import { ChainId, Pair, Route, Token, TokenAmount, Trade, TradeType } from "@uniswap/sdk";
 import { BigNumber } from "ethers";
 import { ActionType } from "hardhat/types";
-import { BondingShare } from "../../artifacts/types/BondingShare";
-import { DebtCoupon } from "../../artifacts/types/DebtCoupon";
-import { DollarMintingCalculator } from "../../artifacts/types/DollarMintingCalculator";
-import { IMetaPool } from "../../artifacts/types/IMetaPool";
-import { IUniswapV2Pair } from "../../artifacts/types/IUniswapV2Pair";
-import { SushiSwapPool } from "../../artifacts/types/SushiSwapPool";
-import { TWAPOracle } from "../../artifacts/types/TWAPOracle";
-import { UbiquityAlgorithmicDollar } from "../../artifacts/types/UbiquityAlgorithmicDollar";
-import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
-import { UbiquityAutoRedeem } from "../../artifacts/types/UbiquityAutoRedeem";
-import { UbiquityGovernance } from "../../artifacts/types/UbiquityGovernance";
+import { BondingShare } from "../../../artifacts/types/BondingShare";
+import { DebtCoupon } from "../../../artifacts/types/DebtCoupon";
+import { DollarMintingCalculator } from "../../../artifacts/types/DollarMintingCalculator";
+import { IMetaPool } from "../../../artifacts/types/IMetaPool";
+import { IUniswapV2Pair } from "../../../artifacts/types/IUniswapV2Pair";
+import { SushiSwapPool } from "../../../artifacts/types/SushiSwapPool";
+import { TWAPOracle } from "../../../artifacts/types/TWAPOracle";
+import { UbiquityAlgorithmicDollar } from "../../../artifacts/types/UbiquityAlgorithmicDollar";
+import { UbiquityAlgorithmicDollarManager } from "../../../artifacts/types/UbiquityAlgorithmicDollarManager";
+import { UbiquityAutoRedeem } from "../../../artifacts/types/UbiquityAutoRedeem";
+import { UbiquityGovernance } from "../../../artifacts/types/UbiquityGovernance";
 
 module.exports = {
   description: "Displays token information",

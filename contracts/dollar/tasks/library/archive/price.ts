@@ -1,12 +1,12 @@
 import "hardhat-deploy";
 import "@nomiclabs/hardhat-waffle";
 import { ActionType } from "hardhat/types";
-import { DollarMintingCalculator } from "../../artifacts/types/DollarMintingCalculator";
-import { ICurveFactory } from "../../artifacts/types/ICurveFactory";
-import { IMetaPool } from "../../artifacts/types/IMetaPool";
-import { TWAPOracle } from "../../artifacts/types/TWAPOracle";
-import { UbiquityAlgorithmicDollar } from "../../artifacts/types/UbiquityAlgorithmicDollar";
-import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
+import { DollarMintingCalculator } from "../../../artifacts/types/DollarMintingCalculator";
+import { ICurveFactory } from "../../../artifacts/types/ICurveFactory";
+import { IMetaPool } from "../../../artifacts/types/IMetaPool";
+import { TWAPOracle } from "../../../artifacts/types/TWAPOracle";
+import { UbiquityAlgorithmicDollar } from "../../../artifacts/types/UbiquityAlgorithmicDollar";
+import { UbiquityAlgorithmicDollarManager } from "../../../artifacts/types/UbiquityAlgorithmicDollarManager";
 
 module.exports = {
   description: "get information about UAD price",

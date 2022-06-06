@@ -1,6 +1,6 @@
 import { ActionType } from "hardhat/types";
-import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
-import pressAnyKey from "../../utils/flow";
+import { UbiquityAlgorithmicDollarManager } from "../../../artifacts/types/UbiquityAlgorithmicDollarManager";
+import pressAnyKey from "../../../utils/flow";
 
 module.exports = {
   description: "excessdollardistribution deployment",

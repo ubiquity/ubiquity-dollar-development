@@ -1,10 +1,10 @@
 import "hardhat-deploy";
 import "@nomiclabs/hardhat-waffle";
 import { ActionType } from "hardhat/types";
-import { ICurveFactory } from "../../artifacts/types/ICurveFactory";
-import { IMetaPool } from "../../artifacts/types/IMetaPool";
-import { UbiquityAlgorithmicDollar } from "../../artifacts/types/UbiquityAlgorithmicDollar";
-import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
+import { ICurveFactory } from "../../../artifacts/types/ICurveFactory";
+import { IMetaPool } from "../../../artifacts/types/IMetaPool";
+import { UbiquityAlgorithmicDollar } from "../../../artifacts/types/UbiquityAlgorithmicDollar";
+import { UbiquityAlgorithmicDollarManager } from "../../../artifacts/types/UbiquityAlgorithmicDollarManager";
 
 module.exports = {
   description: "Get info about our curve metapool",

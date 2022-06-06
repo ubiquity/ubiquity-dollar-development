@@ -1,11 +1,11 @@
 import "@nomiclabs/hardhat-waffle";
 import { ActionType } from "hardhat/types";
-import { CurveUADIncentive } from "../../artifacts/types/CurveUADIncentive";
-import { UbiquityAlgorithmicDollar } from "../../artifacts/types/UbiquityAlgorithmicDollar";
-import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
+import { CurveUADIncentive } from "../../../artifacts/types/CurveUADIncentive";
+import { UbiquityAlgorithmicDollar } from "../../../artifacts/types/UbiquityAlgorithmicDollar";
+import { UbiquityAlgorithmicDollarManager } from "../../../artifacts/types/UbiquityAlgorithmicDollarManager";
 
 module.exports = {
-  description: "Sends ETH and tokens to an address",
+  description: "Checks active incentives",
   action:
     (): ActionType<any> =>
     async (_taskArgs: { receiver: string; manager: string }, { ethers }) => {

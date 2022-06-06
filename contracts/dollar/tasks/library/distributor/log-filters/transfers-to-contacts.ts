@@ -1,8 +1,8 @@
 import { LogDescription } from "@ethersproject/abi";
 import { Log } from "@ethersproject/providers";
-import { Recipient } from "../utils/distributor-types";
+import { Investor } from "../utils/distributor-types";
 
-export function transfersToContactsFilter(recipients: Recipient[]) {
+export function transfersToContactsFilter(recipients: Investor[]) {
   return (txEmits: { events: LogDescription; log: Log }) => {
     const to = txEmits.events.args[1] as string;
     const _amount = txEmits.events.args[2]._hex as string;

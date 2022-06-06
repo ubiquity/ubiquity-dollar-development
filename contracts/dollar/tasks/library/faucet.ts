@@ -5,6 +5,7 @@ import { ActionType } from "hardhat/types";
 import { ERC20 } from "../../artifacts/types";
 import { BondingShareV2 } from "../../artifacts/types/BondingShareV2";
 import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
+import { types } from "hardhat/config";
 
 const NETWORK_ADDRESS = "http://localhost:8545";
 const accountWithWithdrawableBond = "0x4007ce2083c7f3e18097aeb3a39bb8ec149a341d";
@@ -12,8 +13,8 @@ const accountWithWithdrawableBond = "0x4007ce2083c7f3e18097aeb3a39bb8ec149a341d"
 module.exports = {
   description: "Sends ETH and tokens to an address",
   optionalParam: {
-    receiver: "The address that will receive them",
-    manager: "The address of uAD Manager",
+    receiver: ["The address that will receive them", accountWithWithdrawableBond, types.string],
+    manager: ["The address of uAD Manager", "0x4DA97a8b831C345dBe6d16FF7432DF2b7b776d98", types.string],
   },
   action:
     (): ActionType<any> =>

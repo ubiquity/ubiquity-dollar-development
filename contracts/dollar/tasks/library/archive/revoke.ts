@@ -1,6 +1,6 @@
 import "@nomiclabs/hardhat-waffle";
 import { ActionType } from "hardhat/types";
-import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
+import { UbiquityAlgorithmicDollarManager } from "../../../artifacts/types/UbiquityAlgorithmicDollarManager";
 
 const params = { receiver: "The address that will be revoked", manager: "The address of uAD Manager" };
 

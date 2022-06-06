@@ -2,8 +2,8 @@ import "@nomiclabs/hardhat-waffle";
 import "hardhat-deploy";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { ActionType } from "hardhat/types/runtime";
-import mintTransactionEvents from "../../mints-histories.json"; // TODO: pass these in as arguments
-import { TaskArgs } from "./distributor/utils/distributor-types";
+import mintTransactionEvents from "../../../../mints-histories.json"; // TODO: pass these in as arguments
+import { TaskArgs } from "./distributor-types";
 
 module.exports = {
   description: "total the amount minted from a list of transaction events",

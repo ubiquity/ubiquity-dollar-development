@@ -1,17 +1,21 @@
+import { HardhatEthersHelpers } from "@nomiclabs/hardhat-ethers/types";
 import "@nomiclabs/hardhat-waffle";
+import erc20 from "@openzeppelin/contracts/build/contracts/ERC20.json";
 import "hardhat-deploy";
 import { types } from "hardhat/config";
 import { Network } from "hardhat/types";
 import { ActionType, HardhatRuntimeEnvironment } from "hardhat/types/runtime";
 import { contracts } from "../../../../fixtures/ubiquity-dollar-deployment.json";
+import { ERC20 } from "../../artifacts/types/ERC20";
+import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
 import { UbiquityGovernance } from "../../artifacts/types/UbiquityGovernance";
+import tranches from "../../distributor-transactions.json"; // TODO: pass these in as arguments
 import { getAlchemyRpc, warn } from "../../hardhat.config";
 import { vestingRange } from "./distributor/";
+import addressBook from "./distributor/investors.json"; // TODO: pass these in as arguments
 import blockHeightDater from "./distributor/utils/block-height-dater";
 import { verifyMinMaxBlockHeight } from "./distributor/utils/distributor-helpers";
 import { TaskArgs } from "./distributor/utils/distributor-types";
-import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
-import { HardhatEthersHelpers } from "@nomiclabs/hardhat-ethers/types";
 
 const ubiquityGovernanceTokenAddress = "0x4e38D89362f7e5db0096CE44ebD021c3962aA9a0";
 
@@ -23,16 +27,40 @@ module.exports = {
   action: (): ActionType<any> => calculateOwedUbqEmissions,
 };
 
-import "@nomiclabs/hardhat-waffle";
-import "hardhat-deploy";
-import tranches from "../../distributor-transactions.json"; // TODO: pass these in as arguments
-import addressBook from "./distributor/address-book.json"; // TODO: pass these in as arguments
-import { ERC20 } from "../../artifacts/types/ERC20";
-import erc20 from "@openzeppelin/contracts/build/contracts/ERC20.json";
-// module.exports = {
-//   description: "total the amount sent to recipients from a list of transactions",
-//   action: () => sumTotalSentToContacts,
-// };
+// TODO: need to consolidate tasks together
+// currently you must run the following in order
+
+// yarn hardhat distributor --investors <full path to (investors.json)>
+// yarn hardhat calculate-owed-emissions
+
+export async function calculateOwedUbqEmissions(taskArgs: TaskArgs, hre: HardhatRuntimeEnvironment) {
+  const totals = sumTotalSentToContacts();
+
+  let cacheTotalSupply: number;
+  if (taskArgs.token) {
+    const token = (await hre.ethers.getContractAt(erc20.abi, taskArgs.token)) as ERC20;
+    const totalSupply = hre.ethers.utils.formatEther(await token.totalSupply());
+    cacheTotalSupply = parseInt(totalSupply);
+  }
+  cacheTotalSupply = await getTotalSupply(taskArgs, hre);
+
+  const toSend = totals.map((contact: ContactWithTransfers) => {
+    const shouldGet = vestingMath({
+      investorAllocationPercentage: contact.percent,
+      totalSupplyCached: cacheTotalSupply,
+    });
+
+    return Object.assign(
+      {
+        owed: shouldGet - contact.transferred,
+      },
+      contact
+    );
+  });
+
+  console.log(toSend);
+  return toSend;
+}
 
 type AddressBookContact = typeof addressBook[0];
 interface ContactWithTransfers extends AddressBookContact {
@@ -62,37 +90,6 @@ export function sumTotalSentToContacts() {
   });
   // console.log(transferAmountsToContacts);
   return transferAmountsToContacts;
-}
-
-export async function calculateOwedUbqEmissions(taskArgs: TaskArgs, hre: HardhatRuntimeEnvironment) {
-  const totals = sumTotalSentToContacts();
-
-  let cacheTotalSupply: number;
-  if (taskArgs.token) {
-    const token = (await hre.ethers.getContractAt(erc20.abi, taskArgs.token)) as ERC20;
-    const totalSupply = hre.ethers.utils.formatEther(await token.totalSupply());
-    cacheTotalSupply = parseInt(totalSupply);
-  }
-  cacheTotalSupply = await getTotalSupply(taskArgs, hre);
-
-  const toSend = totals.map((contact: ContactWithTransfers) => {
-    const shouldGet = vestingMath({
-      investorAllocationPercentage: contact.percent,
-      totalSupplyCached: cacheTotalSupply,
-    });
-
-    return Object.assign(
-      {
-        owed: shouldGet - contact.transferred,
-      },
-      contact
-    );
-  });
-
-  console.log(toSend);
-  // const startingBlock = 14688630; // 2022-05-01T00:00:00.000Z
-  // const totalStartingSupply = 3336654.633062916928931166; // can run checkMay1StartingSupply(hre) to verify
-  // return { startingBlock, totalStartingSupply };
 }
 
 interface VestingMath {

@@ -1,6 +1,8 @@
 import { Wallet } from "ethers";
 import { EthDaterExampleResult, EthDaterExampleResults } from "./block-height-dater";
-import { Recipient } from "./distributor-types";
+import { Investor } from "./distributor-types";
+import path from "path";
+import { warn } from "../../../../hardhat.config";
 
 export function getDistributor(): Wallet {
   if (process.env.UBQ_DISTRIBUTOR) {
@@ -31,7 +33,7 @@ export async function getRecipients(pathToJson: string) {
   return recipients;
 }
 
-function verifyDataShape(recipient: Recipient) {
+function verifyDataShape(recipient: Investor) {
   if (!recipient.name) {
     console.warn("Recipient should have an name");
   }
@@ -54,7 +56,14 @@ function verifyDataShape(recipient: Recipient) {
   }
 }
 
-async function loadRecipientsFromJsonFile(pathToJson: string): Promise<Recipient[]> {
-  const recipients = (await import(pathToJson)).default;
-  return recipients;
+async function loadRecipientsFromJsonFile(pathToJson: string): Promise<Investor[]> {
+  try {
+    const importing = await import(pathToJson);
+    const recipients = importing.default;
+    return recipients;
+  } catch (e) {
+    warn(`incorrect pathToJson`);
+    warn(path.resolve(pathToJson));
+    throw e;
+  }
 }

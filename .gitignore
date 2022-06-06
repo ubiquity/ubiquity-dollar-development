@@ -48,5 +48,5 @@ typings
 
 # for get-code task
 contract.evm
-contracts/dollar/tasks/library/distributor/address-book.json
+contracts/dollar/tasks/library/distributor/investors.json
 contracts/dollar/distributor-transactions.json

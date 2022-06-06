@@ -12,7 +12,7 @@ import { UbiquityGovernance } from "../artifacts/types/UbiquityGovernance";
 import { IUniswapV2Router02 } from "../artifacts/types/IUniswapV2Router02";
 import { SushiSwapPool } from "../artifacts/types/SushiSwapPool";
 import { IUniswapV2Pair } from "../artifacts/types/IUniswapV2Pair";
-import pressAnyKey from "../utils/flow";
+import pressAnyKey from "../tasks/utils/flow";
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployments, getNamedAccounts, ethers, network } = hre;

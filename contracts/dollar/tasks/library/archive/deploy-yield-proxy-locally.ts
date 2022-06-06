@@ -1,15 +1,16 @@
 import "hardhat-deploy";
 import "@nomiclabs/hardhat-waffle";
 import { ActionType } from "hardhat/types";
-import { IJar } from "../../artifacts/types/IJar";
-import { UbiquityAlgorithmicDollarManager } from "../../artifacts/types/UbiquityAlgorithmicDollarManager";
-import { YieldProxy } from "../../artifacts/types/YieldProxy";
+import { IJar } from "../../../artifacts/types/IJar";
+import { UbiquityAlgorithmicDollarManager } from "../../../artifacts/types/UbiquityAlgorithmicDollarManager";
+import { YieldProxy } from "../../../artifacts/types/YieldProxy";
+import { types } from "hardhat/config";
 
 const NETWORK_ADDRESS = "http://localhost:8545";
 
 module.exports = {
   description: "Deploy YieldProxy to the current hardhat running node",
-  optionalParam: { manager: "The address of uAD Manager" },
+  optionalParam: ["manager address", "0xefC0e701A824943b469a694aC564Aa1efF7Ab7dd", types.string],
   action:
     (): ActionType<any> =>
     async (taskArgs: { receiver: string | null; manager: string | null }, { ethers, getNamedAccounts }) => {
