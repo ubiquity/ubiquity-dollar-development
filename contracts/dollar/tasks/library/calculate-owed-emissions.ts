@@ -5,7 +5,7 @@ import { Network } from "hardhat/types";
 import { ActionType, HardhatRuntimeEnvironment } from "hardhat/types/runtime";
 import { contracts } from "../../../../fixtures/ubiquity-dollar-deployment.json";
 import { UbiquityGovernance } from "../../artifacts/types/UbiquityGovernance";
-import { getAlchemyRpc } from "../../hardhat.config";
+import { getAlchemyRpc, warn } from "../../hardhat.config";
 import { vestingRange } from "./distributor/";
 import blockHeightDater from "./distributor/utils/block-height-dater";
 import { verifyMinMaxBlockHeight } from "./distributor/utils/distributor-helpers";
@@ -23,43 +23,103 @@ module.exports = {
   action: (): ActionType<any> => calculateOwedUbqEmissions,
 };
 
-async function vestingMath(args, hre) {
+import "@nomiclabs/hardhat-waffle";
+import "hardhat-deploy";
+import tranches from "../../distributor-transactions.json"; // TODO: pass these in as arguments
+import addressBook from "./distributor/address-book.json"; // TODO: pass these in as arguments
+import { ERC20 } from "../../artifacts/types/ERC20";
+import erc20 from "@openzeppelin/contracts/build/contracts/ERC20.json";
+// module.exports = {
+//   description: "total the amount sent to recipients from a list of transactions",
+//   action: () => sumTotalSentToContacts,
+// };
+
+type AddressBookContact = typeof addressBook[0];
+interface ContactWithTransfers extends AddressBookContact {
+  transferred: number;
+  transactions: string[];
+}
+
+export function sumTotalSentToContacts() {
+  const transferAmountsToContacts = addressBook.map((_contact) => {
+    const contact = _contact as ContactWithTransfers; // type casting
+
+    tranches.forEach((tranche) => {
+      if (!contact.transferred) {
+        contact.transferred = 0;
+      }
+
+      if (!contact.transactions) {
+        contact.transactions = [];
+      }
+
+      if (tranche.name === contact.name) {
+        contact.transferred += tranche.amount;
+        contact.transactions.push(tranche.hash);
+      }
+    });
+    return contact;
+  });
+  // console.log(transferAmountsToContacts);
+  return transferAmountsToContacts;
+}
+
+export async function calculateOwedUbqEmissions(taskArgs: TaskArgs, hre: HardhatRuntimeEnvironment) {
+  const totals = sumTotalSentToContacts();
+
+  let cacheTotalSupply: number;
+  if (taskArgs.token) {
+    const token = (await hre.ethers.getContractAt(erc20.abi, taskArgs.token)) as ERC20;
+    const totalSupply = hre.ethers.utils.formatEther(await token.totalSupply());
+    cacheTotalSupply = parseInt(totalSupply);
+  }
+  cacheTotalSupply = await getTotalSupply(taskArgs, hre);
+
+  const toSend = totals.map((contact: ContactWithTransfers) => {
+    const shouldGet = vestingMath({
+      investorAllocationPercentage: contact.percent,
+      totalSupplyCached: cacheTotalSupply,
+    });
+
+    return Object.assign(
+      {
+        owed: shouldGet - contact.transferred,
+      },
+      contact
+    );
+  });
+
+  console.log(toSend);
+  // const startingBlock = 14688630; // 2022-05-01T00:00:00.000Z
+  // const totalStartingSupply = 3336654.633062916928931166; // can run checkMay1StartingSupply(hre) to verify
+  // return { startingBlock, totalStartingSupply };
+}
+
+interface VestingMath {
+  investorAllocationPercentage: number;
+  totalSupplyCached: number;
+}
+
+function vestingMath({ investorAllocationPercentage, totalSupplyCached }: VestingMath) {
   // below comments written on 7 june 2022
+  // investorAllocationPercentage = 0.1
 
   const may2022 = 1651363200000;
   const may2024 = 1714521600000;
 
   const msTotal = may2024 - may2022; // 63158400000
   const msSinceStart = Date.now() - may2022; // 3177932875;
-  const percentVested = msSinceStart / msTotal; // 0.05031686799
+  let percentVested = msSinceStart / msTotal; // 0.05031686799
 
-  const tenPercentOfTotalSupply = (await getTotalSupply(args, hre)) * 0.1;
+  if (percentVested > 1) {
+    percentVested = 1;
+    warn(`Vesting completed, capping percentVested to 100%`);
+  }
 
-  const investorsShouldGet = tenPercentOfTotalSupply * percentVested;
-  return investorsShouldGet; // 18,487.0939406307
-}
+  const shareOfTotalSupply = totalSupplyCached * investorAllocationPercentage;
 
-export async function calculateOwedUbqEmissions(taskArgs: TaskArgs, hre: HardhatRuntimeEnvironment) {
-  const startingBlock = 14688630; // 2022-05-01T00:00:00.000Z
-  const totalStartingSupply = 3336654.633062916928931166; // can run checkMay1StartingSupply(hre) to verify
-  return { startingBlock, totalStartingSupply };
-}
-
-async function setBlockHeight(network: Network, blockHeight: number) {
-  console.log(`Setting block height to ${blockHeight}...`);
-  const response = await network.provider.request({
-    method: "hardhat_reset",
-    params: [
-      {
-        forking: {
-          jsonRpcUrl: getAlchemyRpc("mainnet"),
-          blockNumber: blockHeight,
-        },
-      },
-    ],
-  });
-  console.log(`...done!`);
-  return response;
+  const investorShouldGet = shareOfTotalSupply * percentVested;
+  return investorShouldGet; // 18,487.0939406307
 }
 
 interface GetTotalSupply {
@@ -92,4 +152,21 @@ async function checkMay1StartingSupply(hre: HardhatRuntimeEnvironment) {
     }
     return await hre.ethers.getContractAt(name, contracts[name].address);
   }
+}
+
+async function setBlockHeight(network: Network, blockHeight: number) {
+  console.log(`Setting block height to ${blockHeight}...`);
+  const response = await network.provider.request({
+    method: "hardhat_reset",
+    params: [
+      {
+        forking: {
+          jsonRpcUrl: getAlchemyRpc("mainnet"),
+          blockNumber: blockHeight,
+        },
+      },
+    ],
+  });
+  console.log(`...done!`);
+  return response;
 }

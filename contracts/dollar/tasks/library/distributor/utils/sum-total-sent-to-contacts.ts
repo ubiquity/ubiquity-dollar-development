@@ -1,15 +1,12 @@
 import "@nomiclabs/hardhat-waffle";
 import "hardhat-deploy";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { ActionType } from "hardhat/types/runtime";
-import tranches from "../../distributor-transactions.json"; // TODO: pass these in as arguments
-import addressBook from "./distributor/address-book.json"; // TODO: pass these in as arguments
-import { TaskArgs } from "./distributor/utils/distributor-types";
+import tranches from "../../../../distributor-transactions.json"; // TODO: pass these in as arguments
+import addressBook from "../address-book.json"; // TODO: pass these in as arguments
 
-module.exports = {
-  description: "total the amount sent to recipients from a list of transactions",
-  action: (): ActionType<any> => sumTotalSentToContacts,
-};
+// module.exports = {
+//   description: "total the amount sent to recipients from a list of transactions",
+//   action: () => sumTotalSentToContacts,
+// };
 
 type AddressBookContact = typeof addressBook[0];
 interface ContactWithTransfers extends AddressBookContact {
@@ -17,7 +14,7 @@ interface ContactWithTransfers extends AddressBookContact {
   transactions: string[];
 }
 
-export async function sumTotalSentToContacts(taskArgs: TaskArgs, hre: HardhatRuntimeEnvironment) {
+export function sumTotalSentToContacts() {
   const transferAmountsToContacts = addressBook.map((_contact) => {
     const contact = _contact as ContactWithTransfers; // type casting
 
