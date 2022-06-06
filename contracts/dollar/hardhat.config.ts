@@ -134,7 +134,7 @@ function loadHardHatTasks() {
   }
 }
 
-function getAlchemyRpc(network: "mainnet" | "ropsten" | "rinkeby"): string {
+export function getAlchemyRpc(network: "mainnet" | "ropsten" | "rinkeby"): string {
   // This will try and resolve alchemy key related issues
   // first it will read the key value
   // if no value found, then it will attempt to load the .env from above to the .env in the current folder

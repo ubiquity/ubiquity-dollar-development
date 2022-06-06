@@ -1,12 +1,6 @@
-import { ethers, Wallet } from "ethers";
-import blockHeightDater, { EthDaterExampleResult, EthDaterExampleResults } from "./block-height-dater";
-import { vestingRange } from "./";
+import { Wallet } from "ethers";
+import { EthDaterExampleResult, EthDaterExampleResults } from "./block-height-dater";
 import { Recipient } from "./distributor-types";
-
-export async function loadRecipientsFromJsonFile(pathToJson: string): Promise<Recipient[]> {
-  const recipients = (await import(pathToJson)).default;
-  return recipients;
-}
 
 export function getDistributor(): Wallet {
   if (process.env.UBQ_DISTRIBUTOR) {
@@ -37,18 +31,7 @@ export async function getRecipients(pathToJson: string) {
   return recipients;
 }
 
-export async function setTransactionsRange(blockRange: typeof vestingRange) {
-  let provider = new ethers.providers.EtherscanProvider(1, process.env.API_KEY_ETHERSCAN);
-  const timestampsDated = await blockHeightDater(blockRange);
-  const [vestingStart, vestingEnd] = await verifyMinMaxBlockHeight(timestampsDated);
-
-  return async function getTransactionsOfRecipient(recipient: Recipient) {
-    let transactionHistory = await provider.getHistory(recipient.address, vestingStart?.block, vestingEnd?.block);
-    return { recipient, transactionHistory };
-  };
-}
-
-export function verifyDataShape(recipient: Recipient) {
+function verifyDataShape(recipient: Recipient) {
   if (!recipient.name) {
     console.warn("Recipient should have an name");
   }
@@ -69,4 +52,9 @@ export function verifyDataShape(recipient: Recipient) {
   if (typeof recipient.percent !== "number") {
     throw new Error("Recipient percentage must be a number");
   }
+}
+
+async function loadRecipientsFromJsonFile(pathToJson: string): Promise<Recipient[]> {
+  const recipients = (await import(pathToJson)).default;
+  return recipients;
 }

@@ -1,6 +1,6 @@
 import EthDater from "ethereum-block-by-date";
 import { ethers } from "ethers";
-import { vestingRange } from "./";
+import { vestingRange } from "../";
 const provider = new ethers.providers.CloudflareProvider();
 
 export default async function blockHeightDater(range: typeof vestingRange) {

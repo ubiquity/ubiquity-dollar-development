@@ -1,8 +1,14 @@
 import { ethers } from "ethers";
-import { abi as tokenABI } from "../../../artifacts/contracts/UbiquityGovernance.sol/UbiquityGovernance.json";
-import { getKey } from "../../../hardhat.config";
+import { abi as tokenABI } from "../../../../artifacts/contracts/UbiquityGovernance.sol/UbiquityGovernance.json";
+import { getKey } from "../../../../hardhat.config";
 import blockHeightDater from "./block-height-dater";
 import { verifyMinMaxBlockHeight } from "./distributor-helpers";
+
+interface Filter {
+  address: string;
+  fromBlock: number;
+  toBlock: number;
+}
 
 export async function readContractTransactionHistory(address: string, queryDates: string[]) {
   const timestampsDated = await blockHeightDater(queryDates);
@@ -16,16 +22,10 @@ export async function readContractTransactionHistory(address: string, queryDates
     toBlock: range[1]?.block,
   };
 
-  // return {
-  //   address,
-  //   logs: await getLogs(provider, filter),
-  // };
   return await getLogs(provider, filter);
-  // let transactionHistory = await provider.getHistory(address, range[0]?.block, range[1]?.block);
-  // return { address, transactionHistory };
 }
 
-async function getLogs(provider: ethers.providers.EtherscanProvider, filter: { address: string; fromBlock: number; toBlock: number }) {
+async function getLogs(provider: ethers.providers.EtherscanProvider, filter: Filter): Promise<LogAndEvents[]> {
   // https://github.com/ethers-io/ethers.js/issues/487#issuecomment-481881691
 
   let tokenInterface = new ethers.utils.Interface(tokenABI);
@@ -35,10 +35,15 @@ async function getLogs(provider: ethers.providers.EtherscanProvider, filter: { a
     return { log, events };
   });
   return logsAndEvents;
-  // return events;
 }
+
+export interface LogAndEvents {
+  log: ethers.providers.Log;
+  events: ethers.utils.LogDescription;
+}
+
 /*
-ExampleLog {
+type ExampleLog = {
   blockNumber: 14693560;
   blockHash: "0xdfefdb6a69409d7c967957cfd1f127f28e5f6806bcec943e0e2f76035e76c9aa";
   transactionIndex: 157;
@@ -54,7 +59,7 @@ ExampleLog {
   logIndex: 107;
 }
 
-ExampleEvent {
+type ExampleEvent = {
   "eventFragment": {
     "name": "Transfer",
     "anonymous": false,
