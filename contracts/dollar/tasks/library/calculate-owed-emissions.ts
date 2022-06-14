@@ -12,7 +12,7 @@ import { UbiquityGovernance } from "../../artifacts/types/UbiquityGovernance";
 import tranches from "../../distributor-transactions.json"; // TODO: pass these in as arguments
 import { getAlchemyRpc, warn } from "../../hardhat.config";
 import { vestingRange } from "./distributor/";
-import addressBook from "./distributor/investors.json"; // TODO: pass these in as arguments
+import addressBook from "./distributor/beneficiaries/investors.json"; // TODO: pass these in as arguments
 import blockHeightDater from "./distributor/utils/block-height-dater";
 import { verifyMinMaxBlockHeight } from "./distributor/utils/distributor-helpers";
 import { TaskArgs } from "./distributor/utils/distributor-types";
