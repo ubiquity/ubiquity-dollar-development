@@ -82,7 +82,7 @@ const PriceMonitor = (props: PriceMonitorProps) => {
       <widget.PriceExchange from="3CRV" to="uAD" value={props.crvUad} />
       <widget.SubTitle text="Dollar Minting" />
       <widget.Address title="Dollar Minting Calculator" address={props.dollarMintCalcAddress} />
-      <div className="text-center mt-4">
+      <div className="mt-4 text-center">
         {props.dollarToBeMinted ? (
           <div>
             {props.dollarToBeMinted} <span className="text-white text-opacity-75"> uAD</span> to be minted

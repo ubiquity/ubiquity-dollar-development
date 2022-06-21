@@ -8,9 +8,9 @@ const Markets: FC = (): JSX.Element => {
       <widget.Title text="Primary Markets" />
       <div className="flex justify-around">
         <div>
-          <div className="flex justify-center items-center mb-2">
+          <div className="mb-2 flex items-center justify-center">
             <span className="text-accent">
-              <Icon icon="uad" className="w-8 mr-2" />
+              <Icon icon="uad" className="mr-2 w-8" />
             </span>
             <span className="leading-[28px]">uAD</span>
           </div>
@@ -26,9 +26,9 @@ const Markets: FC = (): JSX.Element => {
           </div>
         </div>
         <div>
-          <div className="flex justify-center items-center mb-2">
+          <div className="mb-2 flex items-center justify-center">
             <span className="text-accent">
-              <Icon icon="ubq" className="w-8 mr-2" />
+              <Icon icon="ubq" className="mr-2 w-8" />
             </span>
             <span className="leading-[28px]">UBQ</span>
           </div>
