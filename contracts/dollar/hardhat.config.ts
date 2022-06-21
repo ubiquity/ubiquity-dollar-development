@@ -9,7 +9,7 @@ import "hardhat-gas-reporter";
 import { HardhatUserConfig } from "hardhat/types";
 import path from "path";
 import "solidity-coverage";
-import { colorizeText } from './tasks/utils/console-colors';
+import { colorizeText } from "./tasks/utils/console-colors";
 import namedAccounts from "../../fixtures/named-accounts.json";
 
 // @ts-expect-error
@@ -25,7 +25,7 @@ loadHardHatTasks();
 
 const GAS_PRICE = "auto"; // 20000000000;
 const { MNEMONIC, REPORT_GAS } = process.env;
-const accounts = { mnemonic: "test test test test test test test test test test test junk", }; // use default accounts
+const accounts = { mnemonic: "test test test test test test test test test test test junk" }; // use default accounts
 
 if (!MNEMONIC) {
   warn("MNEMONIC environment variable unset");
@@ -141,8 +141,7 @@ export function getAlchemyRpc(network: "mainnet" | "ropsten" | "rinkeby"): strin
   // if that fails, then it will throw an error and allow the developer to rectify the issue
   if (process.env.API_KEY_ALCHEMY?.length) {
     return `https://eth-${network}.alchemyapi.io/v2/${process.env.API_KEY_ALCHEMY}`;
-  }
-  else {
+  } else {
     throw new Error("Please set the API_KEY_ALCHEMY environment variable to your Alchemy API key");
   }
 }
@@ -151,13 +150,12 @@ export function getKey(keyName: "ETHERSCAN" | "COINMARKETCAP") {
   const PREFIX = "API_KEY_";
   const ENV_KEY = PREFIX.concat(keyName);
   if (process.env[ENV_KEY]) {
-    return process.env[ENV_KEY] as string
-  }
-  else {
-    warn(`Please set the ${ENV_KEY} environment variable to your ${keyName} API key`)
+    return process.env[ENV_KEY] as string;
+  } else {
+    warn(`Please set the ${ENV_KEY} environment variable to your ${keyName} API key`);
   }
 }
 
 export function warn(message: string) {
-  console.warn(colorizeText(`\t⚠ ${message}`, "fgYellow"))
+  console.warn(colorizeText(`\t⚠ ${message}`, "fgYellow"));
 }
