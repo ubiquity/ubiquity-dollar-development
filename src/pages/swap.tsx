@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Icon, IconsNames, Container, Title, ButtonLink } from "src/components/ui";
+import { Icon, IconsNames, Container, Title, ButtonLink } from "src/pages/components/ui";
 
 const Currency = ({ name, icon }: { name: string; icon: IconsNames }) => (
     <div className="flex items-center justify-center">

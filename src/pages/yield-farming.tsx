@@ -1,3 +1,3 @@
-import YieldFarming from "src/components/yield-farming";
+import YieldFarming from "src/pages/components/yield-farming";
 
 export default YieldFarming;

@@ -1,7 +1,7 @@
 import { FC } from "react";
-import PriceMonitor from "src/components/monitor/PriceMonitor";
-import MetapoolMonitor from "src/components/monitor/MetapoolMonitor";
-import TokenMonitor from "src/components/monitor/TokenMonitor";
+import PriceMonitor from "src/pages/components/monitor/PriceMonitor";
+import MetapoolMonitor from "src/pages/components/monitor/MetapoolMonitor";
+import TokenMonitor from "src/pages/components/monitor/TokenMonitor";
 
 const Monitor: FC = (): JSX.Element => {
     return (

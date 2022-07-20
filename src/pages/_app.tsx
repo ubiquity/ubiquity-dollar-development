@@ -5,8 +5,8 @@ import "./styles/proxima.css";
 import { AppProps } from "next/app";
 import Head from "next/head";
 
-import Layout from "src/components/layout";
-import AppContextProvider from "src/components/lib/AppContextProvider";
+import Layout from "src/pages/components/layout";
+import AppContextProvider from "src/pages/components/lib/AppContextProvider";
 
 const noOverlayWorkaroundScript = `
   window.addEventListener('error', event => {

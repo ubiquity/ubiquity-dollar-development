@@ -1,14 +1,14 @@
 import { FC, useState } from "react";
 import { ethers } from "ethers";
 
-import { DisabledBlurredMessage, Container, Title, SubTitle, WalletNotConnected } from "src/components/ui";
+import { DisabledBlurredMessage, Container, Title, SubTitle, WalletNotConnected } from "src/pages/components/ui";
 
-import MigrateButton from "src/components/redeem/MigrateButton";
-import DollarPrice from "src/components/redeem/DollarPrice";
-import UarRedeem from "src/components/redeem/UarRedeem";
-import DebtCouponDeposit from "src/components/redeem/DebtCouponDeposit";
-import DebtCouponRedeem from "src/components/redeem/DebtCouponRedeem";
-import { useManagerManaged, useWalletAddress, useEffectAsync } from "src/components/lib/hooks";
+import MigrateButton from "src/pages/components/redeem/MigrateButton";
+import DollarPrice from "src/pages/components/redeem/DollarPrice";
+import UarRedeem from "src/pages/components/redeem/UarRedeem";
+import DebtCouponDeposit from "src/pages/components/redeem/DebtCouponDeposit";
+import DebtCouponRedeem from "src/pages/components/redeem/DebtCouponRedeem";
+import { useManagerManaged, useWalletAddress, useEffectAsync } from "src/pages/components/lib/hooks";
 
 const PriceStabilization: FC = (): JSX.Element => {
     const [twapPrice, setTwapPrice] = useState<ethers.BigNumber | null>(null);

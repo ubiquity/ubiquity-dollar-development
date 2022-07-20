@@ -1,4 +1,4 @@
-import { Container, Title } from "src/components/ui";
+import { Container, Title } from "src/pages/components/ui";
 
 const Custom404 = () => {
     return (
