@@ -17,7 +17,7 @@ import {
     IUARForDollarsCalculator__factory,
     IUniswapV2Pair__factory,
     ERC20__factory,
-} from "contracts/ubiquistick/types";
+} from "src/contracts/dollar/artifacts/types";
 import { useDeployedContracts } from "src/pages/components/lib/hooks";
 import useWeb3, { PossibleProviders } from "../useWeb3";
 
