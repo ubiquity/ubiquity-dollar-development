@@ -1,7 +1,6 @@
-./contracts
-node_modules
-fixtures
-.next
-pages/styles/tailwind.css
-abi
-deployments
+**/.git
+**/abi
+**/deployments
+**/fixtures
+**/node_modules
+**/pages/styles/tailwind.css
