@@ -2,7 +2,7 @@ import { useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import cx from "classnames";
-import { Icon, IconNames } from "../ui/icons";
+import { Icon, IconsNames } from "@/ui";
 
 const PROD = process.env.NODE_ENV == "production";
 
@@ -110,12 +110,12 @@ const Sidebar = ({
 
         <ul className={cx("flex h-full flex-col", { "justify-center": state !== "permanent" })}>
           <Item text="Ubiquity Intro" href="https://landing.ubq.fi/en/" icon="🦍"></Item>
-          <Item text="Price Stabilization" href="/" icon="💸"></Item>
-          <Item text="Liquidity Mining" href="/liquidity-mining" icon="⛏"></Item>
+          <Item text="Redeem" href="/" icon="💸"></Item>
+          <Item text="Staking" href="/staking" icon="⛏"></Item>
           <Item text="Yield Farming" href="/yield-farming" icon="🚜"></Item>
           {/* <Item text="Debt Coupon" href="/debt-coupon"></Item> */}
           {PROD ? null : <Item text="Launch Party" href="/launch-party" icon="🎉"></Item>}
-          <Item text="Tokens Swap" href="/tokens-swap" icon="🔁"></Item>
+          <Item text="Swap" href="/swap" icon="🔁"></Item>
           <Item text="Docs" href="https://dao.ubq.fi/docs" icon="📑"></Item>
           <Item text="DAO" href="https://dao.ubq.fi/" icon="🤝"></Item>
           <Item text="Blog" href="https://medium.com/ubiquity-dao" icon="📰"></Item>
@@ -136,7 +136,7 @@ const Sidebar = ({
   );
 };
 
-const SocialLinkItem = ({ href, icon, alt }: { href: string; icon: IconNames; alt: string }) => (
+const SocialLinkItem = ({ href, icon, alt }: { href: string; icon: IconsNames; alt: string }) => (
   <a
     href={href}
     className="mx-1 flex h-10 w-10 items-center justify-center rounded-full border border-solid border-transparent p-2 text-white/75 transition duration-300 ease-in-out hover:border-accent/0 hover:bg-white/5 hover:drop-shadow-light hover:transition-none"
@@ -147,9 +147,10 @@ const SocialLinkItem = ({ href, icon, alt }: { href: string; icon: IconNames; al
   </a>
 );
 
-const Item = ({ text, href, icon }: { text: string; href: string; icon: string }) => {
+const Item = ({ text, href }: { text: string; href: string; icon: string }) => {
   const router = useRouter();
   const isActive = router.asPath === href;
+  const isExternal = href.startsWith("http");
   return (
     <li className="relative mb-1 cursor-pointer px-2">
       <Link href={href}>
@@ -164,6 +165,7 @@ const Item = ({ text, href, icon }: { text: string; href: string; icon: string }
           target={href.match(/https?:\/\//) ? "_blank" : ""}
         >
           {text}
+          {isExternal ? <Icon className="ml-0.5 -mt-0.5 h-3.5 opacity-50" icon="external" /> : null}
         </a>
       </Link>
       <div className={cx("absolute left-full top-[50%] -ml-2 h-[1px] bg-accent transition-all", { "w-2": isActive, "w-0": !isActive })}></div>

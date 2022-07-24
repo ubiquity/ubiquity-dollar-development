@@ -53,3 +53,5 @@ investors.json
 distributor-transactions.json
 transactions-histories.json
 operatives.json
+web/dapp
+*/deployments/localhost

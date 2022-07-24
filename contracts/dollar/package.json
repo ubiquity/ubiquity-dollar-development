@@ -13,19 +13,18 @@
     "url": "https://github.com/ubiquity/ubiquity-dollar-development.git"
   },
   "scripts": {
-    "clean": "hardhat clean",
+    "clean": "yarn hardhat clean",
     "build": "TS_NODE_TRANSPILE_ONLY=1 yarn hardhat compile",
-    "test": "hardhat test",
-    "test:coverage": "hardhat coverage",
+    "test": "yarn hardhat test",
+    "test:coverage": "yarn hardhat coverage",
     "lint": "run-s lint:* build",
     "lint:prettier": "prettier --write .",
-    "lint:eslint": "eslint . --ext .js,.ts --fix",
-    "lint:sol": "solhint 'contracts/**/*.sol' --fix",
-    "node:start": "hardhat node --no-deploy --show-accounts",
-    "node:faucet": "hardhat faucet --network localhost",
-    "node:deployYieldProxy": "hardhat deployYieldProxyLocally --network localhost",
-    "_watch:prettier": "yarn nodemon -V --watch tasks/ --exec \"yarn prettier ./tasks/ --write\" -e .ts",
-    "_watch:hh": "yarn nodemon -V --watch tasks/ --exec \"yarn hardhat\" -e .ts"
+    "node:start": "yarn hardhat node --hostname 0.0.0.0 --no-deploy --show-accounts",
+    "node:faucet": "yarn hardhat faucet --network localhost",
+    "node:twapUp:localhost": "yarn hardhat priceReset --price 1.00 --network localhost",
+    "node:twapUp:hardhat": "yarn hardhat priceReset --price 1.00 --network hardhat --dryrun false",
+    "node:twapUp:mainnet": "yarn hardhat priceReset --price 1.00 --network mainnet --dryrun false",
+    "node:deployYieldProxy": "yarn hardhat deployYieldProxyLocally --network localhost"
   },
   "keywords": [
     "stablecoin",
@@ -103,7 +102,7 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "ethereum-block-by-date": "^1.4.5",
     "ethereum-waffle": "^3.4.0",
-    "ethers": "^5.5.4",
+    "ethers": "^5.6.9",
     "hardhat": "^2.8.4",
     "hardhat-deploy": "^0.10.5",
     "hardhat-gas-reporter": "^1.0.7",

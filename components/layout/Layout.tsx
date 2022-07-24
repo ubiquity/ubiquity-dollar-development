@@ -1,16 +1,34 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import Link from "next/link";
 import cx from "classnames";
-import { Icon } from "../ui/icons";
-import Inventory from "../inventory";
-import TransactionsDisplay from "../TransactionsDisplay";
+
+import { Icon, Container } from "@/ui";
+
+import Inventory from "./Inventory";
+import TransactionsDisplay from "./TransactionsDisplay";
 import Sidebar, { SidebarState } from "./Sidebar";
+import WalletConnect from "./WalletConnect";
 
 type LayoutProps = {
   children: React.ReactNode;
 };
 
 const PROD = process.env.NODE_ENV == "production";
+
+function ErrorHandler({ error }: { error: any }) {
+  return (
+    <Container className="w-96">
+      <div className="flex flex-col items-center justify-center text-center">
+        <div className="mb-8 flex w-96 flex-col items-center justify-center text-accent opacity-50">
+          <Icon icon="warning" className="w-20" />
+          <div className="uppercase leading-tight tracking-widest">Error</div>
+        </div>
+        <div className="opacity-75">{error.message}</div>
+      </div>
+    </Container>
+  );
+}
 
 export default function Layout({ children }: LayoutProps) {
   const [sidebarClientWidth, setSidebarClientWidth] = useState(0);
@@ -26,32 +44,38 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="flex">
-      <GridVideoBg />
       <Sidebar permanentThreshold={1024} state={sidebarState} onChange={setSidebarState} onResize={setSidebarClientWidth} />
-      {sidebarState !== "loading" ? (
-        <>
-          <div className="relative z-10 flex-grow pl-0" style={{ paddingLeft: sidebarClientWidth }}>
-            <ConditionalHeader show={sidebarState !== "permanent"} />
+      <div className="fixed top-0 right-0 bottom-0" style={{ left: sidebarClientWidth }}>
+        <WalletConnect />
+        <div className="h-full w-full overflow-auto">
+          <GridVideoBg />
+          {sidebarState !== "loading" ? (
+            <>
+              <div className="relative z-10 flex-grow pl-0">
+                <ConditionalHeader show={sidebarState !== "permanent"} />
 
-            {/* Content */}
+                {/* Content */}
 
-            <div
-              className={cx("mx-auto flex min-h-screen max-w-screen-lg flex-col items-center justify-center px-4 pb-8", {
-                "pt-8": sidebarState === "permanent",
-                "pt-24": sidebarState !== "permanent",
-              })}
-            >
-              {children}
-            </div>
-          </div>
-
-          {/* Floating Inventory */}
-          <div className="pointer-events-none fixed bottom-0 z-50 flex w-full justify-center" style={{ paddingLeft: sidebarClientWidth }}>
-            <Inventory />
-          </div>
-        </>
-      ) : null}
-      <TransactionsDisplay />
+                <div
+                  className={cx("mx-auto flex min-h-screen max-w-screen-lg flex-col items-center justify-center px-4 pb-8", {
+                    "pt-8": sidebarState === "permanent",
+                    "pt-24": sidebarState !== "permanent",
+                  })}
+                >
+                  <ErrorBoundary FallbackComponent={ErrorHandler} resetKeys={[children]}>
+                    {children}
+                  </ErrorBoundary>
+                </div>
+              </div>
+            </>
+          ) : null}
+        </div>
+        {/* Floating Inventory */}
+        <div className="pointer-events-none absolute bottom-0 z-50 flex w-full justify-center">
+          <Inventory />
+        </div>
+        <TransactionsDisplay />
+      </div>
     </div>
   );
 }
